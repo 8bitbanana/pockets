@@ -1,0 +1,48 @@
+Diceroll {
+
+    Expr = ExprSumInfix
+
+    DicerollToken = "d" | "D"
+
+    ExprSumInfix
+        = ExprSumInfix "+" ExprProductInfix --Add
+        | ExprSumInfix "-" ExprProductInfix --Subtract
+        | ExprProductInfix
+
+    ExprProductInfix
+        = ExprProductInfix "*" ExprPowerOfInfix --Multiply
+        | ExprProductInfix "//" ExprPowerOfInfix --FloorDivide
+        | ExprProductInfix "/" ExprPowerOfInfix --Divide
+        | ExprPowerOfInfix
+
+    PowerOfInfixOp = "^"
+
+    ExprPowerOfInfix
+        = ExprPowerOfInfix "^" ExprRollInfix --PowerOf
+        | ExprRollInfix
+
+    ExprRollInfix
+        = ExprRollInfix DicerollToken ExprPriority --Dice
+        | ExprPriority
+
+    ExprPriority
+        = "(" Expr ")" --Paren
+        | DicerollToken ExprPriority --RollPrefix
+        | "+" ExprPriority --PosPrefix
+        | "-" ExprPriority --NegPrefix
+        | Literal
+
+    Literal
+    	= "[" variable_ident "]" --Variable
+        | number --number
+
+    variable_ident
+        = letter variable_ident_char*
+
+    variable_ident_char
+        = alnum | "_" | "-"
+
+    number
+        = digit* "." digit+ --fract
+        | digit+ --whole
+}
