@@ -4,7 +4,8 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build",
+    "ohm": "ohm generateBundles --withTypes src/ohm/diceroll.ohm"
   },
   "devDependencies": {
     "@ohm-js/cli": "^1.1.0",
