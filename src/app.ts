@@ -31,7 +31,17 @@ class SubtractOperation implements PrefixOperation, InfixOperation {
 
 class RollOperation implements PrefixOperation, InfixOperation {
     RunInfix(left: number, right: number): number {
-        return 4; // chosen by fair dice roll; guaranteed to be random
+
+        if (left == 0 || right == 0) {
+            return 0;
+        }
+
+        var total = 0;
+        for (var i = 0; i < left; i++) {
+            total += Math.floor(Math.random() * right) + 1;
+        }
+
+        return total;
     }
     RunPrefix(right: number): number {
         return this.RunInfix(1, right);

@@ -15,8 +15,6 @@ Diceroll {
         | ExprProductInfix "/" ExprPowerOfInfix --Divide
         | ExprPowerOfInfix
 
-    PowerOfInfixOp = "^"
-
     ExprPowerOfInfix
         = ExprPowerOfInfix "^" ExprRollInfix --PowerOf
         | ExprRollInfix
