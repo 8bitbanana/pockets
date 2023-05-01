@@ -1,6 +1,6 @@
 import { InfixOperation, PrefixOperation } from './operation';
 
-class ExprEvaluation {
+export class ExprEvaluation {
     result: number = 0;
     constructor(result: number) {
         this.result = result;
