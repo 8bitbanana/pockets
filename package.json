@@ -18,12 +18,15 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "ohm-js": "^17.0.4"
+    "ohm-js": "^17.0.4",
+    "preact": "^10.14.1",
+    "preact-router": "^4.1.1"
   },
   "jest": {
     "preset": "ts-jest",
     "moduleFileExtensions": [
-      "ts", "js"
+      "ts",
+      "js"
     ],
     "moduleNameMapper": {
       ".+\\.css$": "<rootDir>/src/styleMock.ts"
@@ -31,5 +34,12 @@
     "testMatch": [
       "**/__tests__/*.(test|spec).(ts|tsx|js)"
     ]
+  },
+  "alias": {
+    "$": "./src/",
+    "react": "preact/compat",
+    "react-dom": "preact/compat",
+    "react-dom/test-utils": "preact/test-utils",
+    "react/jsx-runtime": "preact/jsx-runtime"
   }
 }

@@ -12,3 +12,16 @@ obj.parseFunc = function(expr: string) {
 };
 
 console.log('Hello world!');
+
+import { render } from 'preact';
+import { Router } from 'preact-router'
+
+const HelloWorld = () => {
+    return <h1>Hello world!</h1>;
+};
+
+const App = () => {
+    return <HelloWorld />;
+};
+
+render(<App />, document.body);
