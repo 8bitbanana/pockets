@@ -5,19 +5,17 @@ import * as parser from './diceroll/mod';
 var obj:any = {};
 obj = window;
 
-obj.parseFunc = function(expr: string) {
+let parseFunc = function(expr: string) {
     const parsed = parser.ParsedExpression.Parse(expr);
     console.log(parsed?.Evaluate());
     return parsed;
 };
 
-console.log('Hello world!');
-
 import { render } from 'preact';
 import { Router } from 'preact-router'
 
 const HelloWorld = () => {
-    return <h1>Hello world!</h1>;
+    return <h1>{ parseFunc("d20")?.Evaluate()?.result }</h1>;
 };
 
 const App = () => {
