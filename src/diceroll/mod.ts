@@ -45,7 +45,7 @@ diceroll_semantics.addOperation<expression.Expr>('tree', {
     }
 });
 
-export { ExprEvaluation } from './expression'
+export { EvaluatedExpression } from './expression'
 
 export class ParsedExpression {
 
@@ -67,7 +67,7 @@ export class ParsedExpression {
         return new ParsedExpression(expr_tree);
     }
 
-    public Evaluate(): expression.ExprEvaluation | undefined {
+    public Evaluate(): expression.EvaluatedExpression | undefined {
         return this.parsed_expression.evaluate();
     }
 }

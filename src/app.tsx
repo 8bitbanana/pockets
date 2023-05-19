@@ -12,7 +12,6 @@ let parseFunc = function(expr: string) {
 };
 
 import { render } from 'preact';
-import { Router } from 'preact-router'
 
 const HelloWorld = () => {
     return <h1>{ parseFunc("d20")?.Evaluate()?.result }</h1>;

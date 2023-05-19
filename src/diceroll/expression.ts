@@ -1,13 +1,13 @@
 import { InfixOperation, PrefixOperation } from './operation';
 
-export class ExprEvaluation {
+export class EvaluatedExpression {
     result: number = 0;
     constructor(result: number) {
         this.result = result;
     }
 }
 export abstract class Expr {
-    abstract evaluate(): ExprEvaluation;
+    abstract evaluate(): EvaluatedExpression;
 }
 
 abstract class Literal extends Expr {
@@ -20,8 +20,8 @@ export class NumberLiteral extends Literal {
         this.value = value;
     }
 
-    evaluate(): ExprEvaluation {
-        return new ExprEvaluation(this.value);
+    evaluate(): EvaluatedExpression {
+        return new EvaluatedExpression(this.value);
     }
 }
 export class VariableLiteral extends Literal {
@@ -31,8 +31,8 @@ export class VariableLiteral extends Literal {
         this.name = name;
     }
 
-    evaluate(): ExprEvaluation {
-        return new ExprEvaluation(0);
+    evaluate(): EvaluatedExpression {
+        return new EvaluatedExpression(0);
     }
 }
 export class InfixExpression extends Expr {
@@ -47,11 +47,11 @@ export class InfixExpression extends Expr {
         this.right = right;
     }
 
-    evaluate(): ExprEvaluation {
+    evaluate(): EvaluatedExpression {
         const leftEval = this.left.evaluate();
         const rightEval = this.right.evaluate();
         const result = this.op.RunInfix(leftEval.result, rightEval.result);
-        return new ExprEvaluation(result);
+        return new EvaluatedExpression(result);
     }
 }
 export class PrefixExpression extends Expr {
@@ -63,9 +63,9 @@ export class PrefixExpression extends Expr {
         this.right = right;
     }
 
-    evaluate(): ExprEvaluation {
+    evaluate(): EvaluatedExpression {
         const rightEval = this.right.evaluate();
         const result = this.op.RunPrefix(rightEval.result);
-        return new ExprEvaluation(result);
+        return new EvaluatedExpression(result);
     }
 }
