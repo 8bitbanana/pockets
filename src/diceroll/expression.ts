@@ -1,5 +1,14 @@
 import { InfixOperation, PrefixOperation } from './operation';
 
+import { ok, err } from 'true-myth/dist/public/result';
+
+import { MyResult } from "../errors";
+import * as Error from "../errors";
+
+export type EvaluationContext = {
+    resolved_variables: Map<string, number>;
+};
+
 export class EvaluatedExpression {
     result: number = 0;
     constructor(result: number) {
@@ -7,7 +16,7 @@ export class EvaluatedExpression {
     }
 }
 export abstract class Expr {
-    abstract evaluate(): EvaluatedExpression;
+    abstract evaluate(context: EvaluationContext): MyResult<EvaluatedExpression>;
 }
 
 abstract class Literal extends Expr {
@@ -20,8 +29,8 @@ export class NumberLiteral extends Literal {
         this.value = value;
     }
 
-    evaluate(): EvaluatedExpression {
-        return new EvaluatedExpression(this.value);
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        return ok(new EvaluatedExpression(this.value));
     }
 }
 export class VariableLiteral extends Literal {
@@ -31,8 +40,8 @@ export class VariableLiteral extends Literal {
         this.name = name;
     }
 
-    evaluate(): EvaluatedExpression {
-        return new EvaluatedExpression(0);
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        return ok(new EvaluatedExpression(0));
     }
 }
 export class InfixExpression extends Expr {
@@ -47,11 +56,15 @@ export class InfixExpression extends Expr {
         this.right = right;
     }
 
-    evaluate(): EvaluatedExpression {
-        const leftEval = this.left.evaluate();
-        const rightEval = this.right.evaluate();
-        const result = this.op.RunInfix(leftEval.result, rightEval.result);
-        return new EvaluatedExpression(result);
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        const leftEval = this.left.evaluate(context);
+        if (leftEval.isErr) { return leftEval; }
+        const rightEval = this.right.evaluate(context);
+        if (rightEval.isErr) { return rightEval; }
+
+        const result = this.op.RunInfix(leftEval.value.result, rightEval.value.result);
+
+        return result.map((t) => new EvaluatedExpression(t));
     }
 }
 export class PrefixExpression extends Expr {
@@ -63,9 +76,11 @@ export class PrefixExpression extends Expr {
         this.right = right;
     }
 
-    evaluate(): EvaluatedExpression {
-        const rightEval = this.right.evaluate();
-        const result = this.op.RunPrefix(rightEval.result);
-        return new EvaluatedExpression(result);
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        const rightEval = this.right.evaluate(context);
+        if (rightEval.isErr) { return rightEval; }
+
+        const result = this.op.RunPrefix(rightEval.value.result);
+        return result.map((t) => new EvaluatedExpression(t));
     }
 }

@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "ohm-js": "^17.0.4",
-    "preact": "^10.14.1"
+    "preact": "^10.14.1",
+    "true-myth": "^6.2.0"
   },
   "jest": {
     "preset": "ts-jest",

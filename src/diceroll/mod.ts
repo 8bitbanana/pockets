@@ -1,6 +1,9 @@
 import grammer, { DicerollSemantics } from "../ohm/diceroll.ohm-bundle";
 import * as operation from './operation';
 import * as expression from './expression';
+import { MyResult } from "../errors";
+import * as Error from "../errors";
+import { ok, err } from "true-myth/dist/public/result";
 
 const diceroll_semantics: DicerollSemantics = grammer.createSemantics();
 diceroll_semantics.addOperation<expression.Expr>('tree', {
@@ -55,19 +58,22 @@ export class ParsedExpression {
         this.parsed_expression = expr;
     }
 
-    public static Parse(expr: string): ParsedExpression | undefined {
+    public static Parse(expr: string): MyResult<ParsedExpression> {
         const matchResult = grammer.match(expr);
 
         if (matchResult.failed()) {
             // If we want better error reporting, can just swap undefined for an error type
-            return undefined;
+            return err(new Error.ParsingError);
         }
 
         const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree();
-        return new ParsedExpression(expr_tree);
+        return ok(new ParsedExpression(expr_tree));
     }
 
-    public Evaluate(): expression.EvaluatedExpression | undefined {
-        return this.parsed_expression.evaluate();
+    public Evaluate(): MyResult<expression.EvaluatedExpression> {
+
+        const context: expression.EvaluationContext = { resolved_variables: new Map };
+
+        return this.parsed_expression.evaluate(context);
     }
 }
