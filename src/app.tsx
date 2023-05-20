@@ -9,7 +9,7 @@ import { render } from 'preact';
 
 const HelloWorld = () => {
 
-    const parsed = parser.ParsedExpression.Parse("d20");
+    const parsed = parser.ParsedExpression.Parse("d20+[test]");
     const result = parsed.andThen((t) => t.Evaluate());
 
     if (result.isOk)

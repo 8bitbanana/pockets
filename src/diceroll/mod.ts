@@ -5,45 +5,49 @@ import { MyResult } from "../errors";
 import * as Error from "../errors";
 import { ok, err } from "true-myth/dist/public/result";
 
+
+
 const diceroll_semantics: DicerollSemantics = grammer.createSemantics();
-diceroll_semantics.addOperation<expression.Expr>('tree', {
+diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
     ExprSumInfix_Add(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.AddOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.AddOperation, arg2.tree(this.args.context));
     },
     ExprSumInfix_Subtract(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.SubtractOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.SubtractOperation, arg2.tree(this.args.context));
     },
     ExprProductInfix_Multiply(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.MultiplyOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.MultiplyOperation, arg2.tree(this.args.context));
     },
     ExprProductInfix_FloorDivide(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.FloorDivideOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.FloorDivideOperation, arg2.tree(this.args.context));
     },
     ExprProductInfix_Divide(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.DivideOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.DivideOperation, arg2.tree(this.args.context));
     },
     ExprPowerOfInfix_PowerOf(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.PowerOfOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.PowerOfOperation, arg2.tree(this.args.context));
     },
     ExprRollInfix_Dice(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(), new operation.RollOperation, arg2.tree());
+        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.RollOperation, arg2.tree(this.args.context));
     },
     ExprPriority_Paren(arg0, arg1, arg2) {
-        return arg1.tree();
+        return arg1.tree(this.args.context);
     },
     ExprPriority_RollPrefix(arg0, arg1) {
-        return new expression.PrefixExpression(new operation.RollOperation, arg1.tree());
+        return new expression.PrefixExpression(new operation.RollOperation, arg1.tree(this.args.context));
     },
     ExprPriority_PosPrefix(arg0, arg1) {
-        return new expression.PrefixExpression(new operation.AddOperation, arg1.tree());
+        return new expression.PrefixExpression(new operation.AddOperation, arg1.tree(this.args.context));
     },
     ExprPriority_NegPrefix(arg0, arg1) {
-        return new expression.PrefixExpression(new operation.SubtractOperation, arg1.tree());
+        return new expression.PrefixExpression(new operation.SubtractOperation, arg1.tree(this.args.context));
     },
     Literal_number(arg0) {
         return new expression.NumberLiteral(parseFloat(this.sourceString));
     },
     Literal_Variable(arg0, arg1, arg2) {
+
+        this.args.context.unresolved_variables.add(arg1.sourceString);
         return new expression.VariableLiteral(arg1.sourceString);
     }
 });
@@ -66,7 +70,11 @@ export class ParsedExpression {
             return err(new Error.ParsingError);
         }
 
-        const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree();
+        let parse_context: expression.ParseContext = { unresolved_variables: new Set };
+
+        const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree(parse_context);
+
+        console.log(parse_context.unresolved_variables);
         return ok(new ParsedExpression(expr_tree));
     }
 

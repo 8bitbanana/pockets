@@ -5,6 +5,10 @@ import { ok, err } from 'true-myth/dist/public/result';
 import { MyResult } from "../errors";
 import * as Error from "../errors";
 
+export type ParseContext = {
+    unresolved_variables: Set<string>;
+}
+
 export type EvaluationContext = {
     resolved_variables: Map<string, number>;
 };
@@ -16,6 +20,7 @@ export class EvaluatedExpression {
     }
 }
 export abstract class Expr {
+
     abstract evaluate(context: EvaluationContext): MyResult<EvaluatedExpression>;
 }
 
