@@ -13,7 +13,13 @@ export class UnknownVariable implements Error {
     }
 };
 
-export class AttributeCycle implements Error {};
+export class AttributeCycle implements Error {
+    name: string;
+
+    constructor(name: string) {
+        this.name = name;
+    }
+};
 
 // export class RuntimeEvalError implements Error {
 //     description: string = "" 

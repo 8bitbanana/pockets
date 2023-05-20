@@ -57,9 +57,11 @@ export { EvaluatedExpression } from './expression'
 export class ParsedExpression {
 
     private parsed_expression: expression.Expr;
+    private unresolved_variables: string[];
 
-    private constructor(expr: expression.Expr) {
+    private constructor(expr: expression.Expr, unresolved_variables: string[]) {
         this.parsed_expression = expr;
+        this.unresolved_variables = unresolved_variables;
     }
 
     public static Parse(expr: string): MyResult<ParsedExpression> {
@@ -74,13 +76,16 @@ export class ParsedExpression {
 
         const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree(parse_context);
 
-        console.log(parse_context.unresolved_variables);
-        return ok(new ParsedExpression(expr_tree));
+        return ok(new ParsedExpression(expr_tree, Array.from(parse_context.unresolved_variables)));
     }
 
-    public Evaluate(): MyResult<expression.EvaluatedExpression> {
+    public GetUnresolvedVariables() {
+        return this.unresolved_variables;
+    }
 
-        const context: expression.EvaluationContext = { resolved_variables: new Map };
+    public Evaluate(resolved_variables: Map<string, expression.EvaluatedExpression>): MyResult<expression.EvaluatedExpression> {
+
+        const context: expression.EvaluationContext = { resolved_variables: resolved_variables };
 
         return this.parsed_expression.evaluate(context);
     }

@@ -9,16 +9,17 @@ export type ParseContext = {
     unresolved_variables: Set<string>;
 }
 
-export type EvaluationContext = {
-    resolved_variables: Map<string, number>;
-};
-
 export class EvaluatedExpression {
     result: number = 0;
     constructor(result: number) {
         this.result = result;
     }
 }
+
+export type EvaluationContext = {
+    resolved_variables: Map<string, EvaluatedExpression>;
+};
+
 export abstract class Expr {
 
     abstract evaluate(context: EvaluationContext): MyResult<EvaluatedExpression>;
@@ -46,7 +47,14 @@ export class VariableLiteral extends Literal {
     }
 
     evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
-        return ok(new EvaluatedExpression(0));
+
+        const attr = context.resolved_variables.get(this.name);
+
+        if (attr !== undefined) {
+            return ok(new EvaluatedExpression(attr.result));
+        } else {
+            return err(new Error.UnknownVariable(this.name));
+        }
     }
 }
 export class InfixExpression extends Expr {
