@@ -26,7 +26,8 @@ export class AttrContainer {
         let stack: AttrKey[] = [attrToEvaluate];
         // stack.concat(Array.from(attr.GetUnresolvedVariables()));
 
-        while (true) {
+        let safety = 1_000_000;
+        while (safety-- > 0) {
             const attrkey = stack.pop();
             if (attrkey === undefined) {
                 break;
