@@ -24,9 +24,11 @@ const AttributeMenu = () => {
 
     const names = ["first test", "second test", "third test"];
 
-    return names.map((object, i) => {
-        return <AttributeMenuElement attrname={object}/>
-    });
+    return <div>
+        {names.map((object, i) => {
+            return <AttributeMenuElement attrname={object}/>
+        })}
+    </div>
 };
 
 export default AttributeMenu;
