@@ -1,14 +1,17 @@
 import * as ohm from 'ohm-js';
 import * as ohm_extras from 'ohm-js/extras';
-import * as parser from './diceroll/mod';
+import * as parser from '../diceroll/mod';
 
 var obj:any = {};
 obj = window;
 
 import { render } from 'preact';
-import { AttrContainer } from './attribute';
-import { MyResult } from './errors';
+import { AttrContainer } from '../attribute';
+import { MyResult } from '../errors';
 import { ok, err } from 'true-myth/dist/public/result';
+
+import "./AttributeMenu";
+import AttributeMenu from './AttributeMenu';
 
 function createAttrContainer(): MyResult<AttrContainer> {
     let attributes = new AttrContainer;
@@ -51,7 +54,7 @@ const HelloWorld = () => {
 };
 
 const App = () => {
-    return <HelloWorld />;
+    return <AttributeMenu />;
 };
 
 render(<App />, document.body);
