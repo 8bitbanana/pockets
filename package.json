@@ -18,6 +18,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "comlink": "^4.4.1",
     "ohm-js": "^17.0.4",
     "preact": "^10.14.1",
     "true-myth": "^6.2.0"
