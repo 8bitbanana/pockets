@@ -54,7 +54,14 @@ const HelloWorld = () => {
 };
 
 const App = () => {
-    return <AttributeMenu />;
+
+    const attributes = createAttrContainer();
+
+    if (attributes.isOk) {
+        return <AttributeMenu attribute_container={attributes.value} />;
+    } else {
+        return <h1>Err</h1>;
+    }
 };
 
 render(<App />, document.body);
