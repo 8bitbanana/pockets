@@ -2,8 +2,8 @@ import { InfixOperation, PrefixOperation } from './operation';
 
 import { ok, err } from 'true-myth/dist/public/result';
 
-import { MyResult } from "../errors";
-import * as Error from "../errors";
+import { MyResult } from "lib/errors";
+import * as Error from "lib/errors";
 
 export type ParseContext = {
     unresolved_variables: Set<string>;

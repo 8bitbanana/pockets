@@ -1,4 +1,4 @@
-import { ParsedExpression, EvaluatedExpression } from "./diceroll/mod";
+import { ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
 
 import { MyResult } from "./errors";
 import * as Error from './errors';

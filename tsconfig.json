@@ -4,6 +4,8 @@
         "lib": ["es5","DOM"],
         "esModuleInterop": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "preact"
+        "jsxImportSource": "preact",
+        "baseUrl": "./src",
+        
     }
 }

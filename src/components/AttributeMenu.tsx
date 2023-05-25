@@ -1,9 +1,9 @@
 
 import * as style from "./AttributeMenu.module.css"
 
-import { AttrContainer, Attribute } from "../attribute";
+import { AttrContainer, Attribute } from "lib/attribute";
 import { Component } from "preact";
-import { ParsedExpression } from "../diceroll/mod";
+import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
 
 type AttributeMenuElementProps = {

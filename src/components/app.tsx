@@ -1,13 +1,13 @@
 import * as ohm from 'ohm-js';
 import * as ohm_extras from 'ohm-js/extras';
-import * as parser from '../diceroll/mod';
+import * as parser from 'lib/diceroll/mod';
 
 var obj:any = {};
 obj = window;
 
 import { render } from 'preact';
-import { AttrContainer } from '../attribute';
-import { MyResult } from '../errors';
+import { AttrContainer } from 'lib/attribute';
+import { MyResult } from 'lib/errors';
 import { ok, err } from 'true-myth/dist/public/result';
 
 import "./AttributeMenu";

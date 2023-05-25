@@ -1,8 +1,8 @@
-import grammer, { DicerollSemantics } from "../ohm/diceroll.ohm-bundle";
+import grammer, { DicerollSemantics } from "ohm/diceroll.ohm-bundle";
 import * as operation from './operation';
 import * as expression from './expression';
-import { MyResult } from "../errors";
-import * as Error from "../errors";
+import { MyResult } from "lib/errors";
+import * as Error from "lib/errors";
 import { ok, err } from "true-myth/dist/public/result";
 
 
