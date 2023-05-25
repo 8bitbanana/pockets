@@ -13,7 +13,26 @@ export class AttrContainer {
     data: Map<AttrKey, Attribute> = new Map();
 
     add(name: string, expression: Attribute) {
+        // Todo - fail if already exists
+
         this.data.set(name, expression);
+    }
+
+    modify(name: string, new_attr: Attribute): boolean {
+        const attr_result = this.get_attribute(name);
+        if (attr_result.isErr) {
+            // Todo - this should fail loud: CharsheetAction::Run should
+            // return a Result to be fallable
+            return false;
+        }
+
+        let old_attr = attr_result.value;
+        if (old_attr === new_attr) {
+            return false;
+        }
+
+        this.data.set(name, new_attr);
+        return true;
     }
 
     has(name: string): boolean {

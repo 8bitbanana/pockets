@@ -31,6 +31,18 @@ export class CA_DeleteAttribute implements CharsheetAction {
     }
 }
 
+export class CA_ModifyAttribute implements CharsheetAction {
+    key: string;
+    new_expr: string;
+    constructor(key: string, new_expr: string) {
+        this.key = key; this.new_expr = new_expr;
+    }
+
+    run(sheet: Charsheet): boolean {
+        return sheet.attributes.modify(this.key, this.new_expr);
+    }
+}
+
 export const CharsheetReducer = (old_sheet: Charsheet, action: CharsheetAction) => {
 
     let sheet: Charsheet = {...old_sheet};

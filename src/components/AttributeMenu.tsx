@@ -8,7 +8,7 @@ import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
 import { CS } from "./app";
-import { CA_AddBlankAttribute, CA_DeleteAttribute } from "lib/charsheet_actions";
+import { CA_AddBlankAttribute, CA_DeleteAttribute, CA_ModifyAttribute } from "lib/charsheet_actions";
 
 type AttributeMenuElementProps = {
     name: string,
@@ -31,8 +31,10 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
         // }
 
         return <div>
-            <input type="text" value={this.props.name} />
-            <input type="text" value={this.props.expr} />
+            <input type="text" value={this.props.name} disabled/>
+            <input type="text" value={this.props.expr} onChange={(event)=>{
+                dispatch(new CA_ModifyAttribute(this.props.name, event.currentTarget.value))
+            }}/>
             <button>Eval</button>
             <button onClick={() => {
                 dispatch(new CA_DeleteAttribute(this.props.name));
@@ -48,8 +50,6 @@ type AttributeMenuProps = {
 class AttributeMenu extends Component<AttributeMenuProps> {
 
     render() {
-        //const names = ["first test", "second test", "third test"];
-
         const { sheet, dispatch } = useContext(CS);
 
         const names = sheet.attributes.data;
