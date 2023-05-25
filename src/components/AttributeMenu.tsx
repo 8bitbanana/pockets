@@ -23,9 +23,9 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     render() {
 
-        const charsheet = useContext(CS);
+        const cs = useContext(CS);
 
-        const expr_string = charsheet.attributes.get_expression_string(this.props.attrkey);
+        const expr_string = cs.getter.attributes.get_expression_string(this.props.attrkey);
         if (expr_string.isErr) {
             throw "Invalid attrkey";
         }
@@ -45,27 +45,33 @@ type AttributeMenuProps = {
 
 class AttributeMenu extends Component<AttributeMenuProps> {
 
-    // add_blank_attribute() {
-    //     let charsheet = useContext(CS);
-
-    //     charsheet.attributes.add("new")
-    // }
-
     render() {
         //const names = ["first test", "second test", "third test"];
 
-        const charsheet = useContext(CS);
+        const cs = useContext(CS);
 
-        const names = charsheet.attributes.data;
+        const names = cs.getter.attributes.data;
 
         const elements: JSXInternal.Element[] = [];
-        charsheet.attributes.data.forEach((value, key) => {
+        cs.getter.attributes.data.forEach((value, key) => {
             elements.push(
                 <AttributeMenuElement attrkey={key} />
             )
         });
 
-        return <div>{elements}</div>;
+        return (
+            <div>
+                {elements}
+                <button onClick={() => {
+                    cs.setter((old_sheet) => {
+                        let new_sheet = {...old_sheet};
+                        new_sheet.attributes.add("new", "0");
+                        return new_sheet;
+                    });
+                    //console.log(cs.getter.attributes);
+                }} >Add</button>
+            </div>
+        );
     }
 
 }

@@ -5,7 +5,7 @@ import * as parser from 'lib/diceroll/mod';
 var obj:any = {};
 obj = window;
 
-import { render, createContext, Context } from 'preact';
+import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer } from 'lib/attribute';
 import { MyResult } from 'lib/errors';
 import { ok, err } from 'true-myth/dist/public/result';
@@ -13,8 +13,9 @@ import { Charsheet } from 'lib/charsheet';
 
 import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
+import { StateUpdater, useMemo, useState } from 'preact/hooks';
 
-function createAttrContainer(): MyResult<AttrContainer> {
+function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
     
     let unparsed = [
@@ -29,42 +30,40 @@ function createAttrContainer(): MyResult<AttrContainer> {
         attributes.add(kvp[0], kvp[1]);
     }
 
-    return ok(attributes);
+    return attributes;
 }
 
-const HelloWorld = () => {
+export type CharsheetUpdater = {
+    getter: Charsheet;
+    setter: StateUpdater<Charsheet>
+}
 
-    const attributes = createAttrContainer();
+export let CS: Context<CharsheetUpdater> = createContext({} as CharsheetUpdater);
 
-    const result = attributes.andThen((t) => t.evaluate("weapon_attack_roll"));
+class App extends Component<{}, {}> {
 
-    if (result.isOk)
-    {
-        console.log(result.value.result);
-        return <h1>{ result.value.result }</h1>;
+    constructor() {
+        super();
     }
-    else
-    {
-        console.log(result.error);
-        return <h1>Error: { result.error }</h1>;
-    }
-};
 
-export let CS: Context<Charsheet> = createContext({} as Charsheet);
+    render() {
 
-const App = () => {
+        const [charsheet, setCharsheet] = useState(new Charsheet(createAttrContainer()));
 
-    const attributes = createAttrContainer();
-
-    if (attributes.isOk) {
+        const updater: CharsheetUpdater = useMemo(() => {
+            return {
+                getter: charsheet,
+                setter: setCharsheet
+            }
+        }, [charsheet]);
+    
         return (
-            <CS.Provider value={new Charsheet(attributes.value)}>
+            <CS.Provider value={updater}>
                 <AttributeMenu />
             </CS.Provider>
         );
-    } else {
-        return <h1>Err</h1>;
     }
-};
+
+}
 
 render(<App />, document.body);
