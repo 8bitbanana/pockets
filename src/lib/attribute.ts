@@ -16,6 +16,18 @@ export class AttrContainer {
         this.data.set(name, expression);
     }
 
+    get_expression_string(attrkey: AttrKey): MyResult<string> {
+        return this.get_attribute(attrkey).map((expr) => expr.GetUnparsedString());
+    }
+
+    private get_attribute(attrkey: AttrKey): MyResult<Attribute> {
+        const attr = this.data.get(attrkey);
+        if (attr === undefined) {
+            return err(new Error.UnknownVariable(attrkey));
+        }
+        return ok(attr);
+    }
+
     evaluate(attrToEvaluate: AttrKey): MyResult<EvaluatedExpression> {
 
         // const attr = this.data.get(attrToEvaluate);
@@ -42,11 +54,11 @@ export class AttrContainer {
                 return err(new Error.AttributeCycle(attrkey));
             }
 
-            const attr = this.data.get(attrkey);
-
-            if (attr === undefined) {
-                return err(new Error.UnknownVariable(attrkey));
+            const attr_result = this.get_attribute(attrkey);
+            if (attr_result.isErr) {
+                return err(attr_result.error);
             }
+            const attr = attr_result.value;
 
             const dependencies = attr.GetUnresolvedVariables();
 

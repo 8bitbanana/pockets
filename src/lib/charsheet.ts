@@ -1,8 +1,10 @@
 
 import {AttrContainer} from "./attribute";
 
-class Charsheet {
-    public attributes: AttrContainer = new AttrContainer;
+export class Charsheet {
+    public attributes: AttrContainer;
 
-
+    constructor(attributes: AttrContainer) {
+        this.attributes = attributes;
+    }
 }

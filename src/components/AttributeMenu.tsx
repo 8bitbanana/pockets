@@ -5,10 +5,13 @@ import { AttrContainer, Attribute } from "lib/attribute";
 import { Component } from "preact";
 import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
+import { useContext } from "preact/hooks";
+
+import { CS } from "./app";
 
 type AttributeMenuElementProps = {
     attrkey: string,
-    attribute: ParsedExpression
+    // attribute: ParsedExpression
 };
 
 // Component<props, state>
@@ -19,9 +22,17 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
     }
 
     render() {
+
+        const charsheet = useContext(CS);
+
+        const expr_string = charsheet.attributes.get_expression_string(this.props.attrkey);
+        if (expr_string.isErr) {
+            throw "Invalid attrkey";
+        }
+
         return <div>
             <input type="text" value={this.props.attrkey} />
-            <input type="text" value="placeholder" />
+            <input type="text" value={expr_string.value} />
             <button>Eval</button>
             <button>Delete</button>
         </div>;
@@ -29,7 +40,7 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 }
 
 type AttributeMenuProps = {
-    attribute_container: AttrContainer;
+    // attribute_container: AttrContainer;
 }
 
 class AttributeMenu extends Component<AttributeMenuProps> {
@@ -37,12 +48,14 @@ class AttributeMenu extends Component<AttributeMenuProps> {
     render() {
         //const names = ["first test", "second test", "third test"];
 
-        const names = this.props.attribute_container.data;
+        const charsheet = useContext(CS);
+
+        const names = charsheet.attributes.data;
 
         const elements: JSXInternal.Element[] = [];
-        this.props.attribute_container.data.forEach((value, key) => {
+        charsheet.attributes.data.forEach((value, key) => {
             elements.push(
-                <AttributeMenuElement attrkey={key} attribute={value} />
+                <AttributeMenuElement attrkey={key} />
             )
         });
 

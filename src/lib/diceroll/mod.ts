@@ -56,10 +56,12 @@ export { EvaluatedExpression } from './expression'
 
 export class ParsedExpression {
 
+    private unparsed_expression_string: string;
     private parsed_expression: expression.Expr;
     private unresolved_variables: string[];
 
-    private constructor(expr: expression.Expr, unresolved_variables: string[]) {
+    private constructor(expr_str: string, expr: expression.Expr, unresolved_variables: string[]) {
+        this.unparsed_expression_string = expr_str;
         this.parsed_expression = expr;
         this.unresolved_variables = unresolved_variables;
     }
@@ -76,7 +78,11 @@ export class ParsedExpression {
 
         const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree(parse_context);
 
-        return ok(new ParsedExpression(expr_tree, Array.from(parse_context.unresolved_variables)));
+        return ok(new ParsedExpression(expr, expr_tree, Array.from(parse_context.unresolved_variables)));
+    }
+
+    public GetUnparsedString() {
+        return this.unparsed_expression_string;
     }
 
     public GetUnresolvedVariables() {

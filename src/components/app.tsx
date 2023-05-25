@@ -5,10 +5,11 @@ import * as parser from 'lib/diceroll/mod';
 var obj:any = {};
 obj = window;
 
-import { render } from 'preact';
+import { render, createContext, Context } from 'preact';
 import { AttrContainer } from 'lib/attribute';
 import { MyResult } from 'lib/errors';
 import { ok, err } from 'true-myth/dist/public/result';
+import { Charsheet } from 'lib/charsheet';
 
 import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
@@ -53,12 +54,18 @@ const HelloWorld = () => {
     }
 };
 
+export let CS: Context<Charsheet> = createContext({} as Charsheet);
+
 const App = () => {
 
     const attributes = createAttrContainer();
 
     if (attributes.isOk) {
-        return <AttributeMenu attribute_container={attributes.value} />;
+        return (
+            <CS.Provider value={new Charsheet(attributes.value)}>
+                <AttributeMenu />
+            </CS.Provider>
+        );
     } else {
         return <h1>Err</h1>;
     }
