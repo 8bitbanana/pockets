@@ -13,7 +13,7 @@ import { Charsheet } from 'lib/charsheet';
 
 import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
-import { StateUpdater, useMemo, useState } from 'preact/hooks';
+import { StateUpdater, useMemo, useReducer, useState } from 'preact/hooks';
 
 function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
@@ -33,9 +33,43 @@ function createAttrContainer(): AttrContainer {
     return attributes;
 }
 
+export enum CharsheetAction {
+    ADD_BLANK_ATTRIBUTE = "ADD_BLANK_ATTRIBUTE"
+}
+
+function CharsheetReducer(old_sheet: Charsheet, action: CharsheetAction) {
+
+    let sheet: Charsheet = {...old_sheet};
+
+    console.info("Action: " + action);
+
+    switch (action) {
+        case CharsheetAction.ADD_BLANK_ATTRIBUTE:
+
+            let count = 0
+            while (count++ < 1000) {
+                const name = "new" + count;
+                if (!sheet.attributes.has(name)) {
+                    sheet.attributes.add(name, "0");
+                    break;
+                }
+            }
+            break; 
+        default:
+            return old_sheet;
+    }
+
+    return sheet;
+}
+
+// export type CharsheetUpdater = {
+//     getter: Charsheet;
+//     setter: StateUpdater<Charsheet>
+// }
+
 export type CharsheetUpdater = {
-    getter: Charsheet;
-    setter: StateUpdater<Charsheet>
+    sheet: Charsheet,
+    dispatch: (action: CharsheetAction) => void
 }
 
 export let CS: Context<CharsheetUpdater> = createContext({} as CharsheetUpdater);
@@ -48,14 +82,14 @@ class App extends Component<{}, {}> {
 
     render() {
 
-        const [charsheet, setCharsheet] = useState(new Charsheet(createAttrContainer()));
+        const [sheet, dispatch] = useReducer(CharsheetReducer, new Charsheet(createAttrContainer()));
 
         const updater: CharsheetUpdater = useMemo(() => {
             return {
-                getter: charsheet,
-                setter: setCharsheet
+                sheet: sheet,
+                dispatch: dispatch
             }
-        }, [charsheet]);
+        }, [sheet]);
     
         return (
             <CS.Provider value={updater}>

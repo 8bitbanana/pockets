@@ -7,14 +7,13 @@ import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
-import { CS } from "./app";
+import { CS, CharsheetAction } from "./app";
 
 type AttributeMenuElementProps = {
-    attrkey: string,
-    // attribute: ParsedExpression
+    name: string,
+    expr: string
 };
 
-// Component<props, state>
 class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     constructor() {
@@ -23,16 +22,16 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     render() {
 
-        const cs = useContext(CS);
+        // const { sheet, dispatch } = useContext(CS);
 
-        const expr_string = cs.getter.attributes.get_expression_string(this.props.attrkey);
-        if (expr_string.isErr) {
-            throw "Invalid attrkey";
-        }
+        // const expr_string = sheet.attributes.get_expression_string(this.props.attrkey);
+        // if (expr_string.isErr) {
+        //     throw "Invalid attrkey";
+        // }
 
         return <div>
-            <input type="text" value={this.props.attrkey} />
-            <input type="text" value={expr_string.value} />
+            <input type="text" value={this.props.name} />
+            <input type="text" value={this.props.expr} />
             <button>Eval</button>
             <button>Delete</button>
         </div>;
@@ -48,14 +47,14 @@ class AttributeMenu extends Component<AttributeMenuProps> {
     render() {
         //const names = ["first test", "second test", "third test"];
 
-        const cs = useContext(CS);
+        const { sheet, dispatch } = useContext(CS);
 
-        const names = cs.getter.attributes.data;
+        const names = sheet.attributes.data;
 
         const elements: JSXInternal.Element[] = [];
-        cs.getter.attributes.data.forEach((value, key) => {
+        sheet.attributes.data.forEach((value, key) => {
             elements.push(
-                <AttributeMenuElement attrkey={key} />
+                <AttributeMenuElement name={key} expr={value} />
             )
         });
 
@@ -63,12 +62,7 @@ class AttributeMenu extends Component<AttributeMenuProps> {
             <div>
                 {elements}
                 <button onClick={() => {
-                    cs.setter((old_sheet) => {
-                        let new_sheet = {...old_sheet};
-                        new_sheet.attributes.add("new", "0");
-                        return new_sheet;
-                    });
-                    //console.log(cs.getter.attributes);
+                    dispatch(CharsheetAction.ADD_BLANK_ATTRIBUTE);
                 }} >Add</button>
             </div>
         );

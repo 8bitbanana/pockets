@@ -16,6 +16,10 @@ export class AttrContainer {
         this.data.set(name, expression);
     }
 
+    has(name: string): boolean {
+        return this.data.has(name);
+    }
+
     get_expression_string(attrkey: AttrKey): MyResult<string> {
         return this.get_attribute(attrkey);
     }
