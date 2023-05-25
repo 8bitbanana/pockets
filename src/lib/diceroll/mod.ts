@@ -5,8 +5,6 @@ import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
 import { ok, err } from "true-myth/dist/public/result";
 
-
-
 const diceroll_semantics: DicerollSemantics = grammer.createSemantics();
 diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
     ExprSumInfix_Add(arg0, arg1, arg2) {
@@ -54,19 +52,21 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
 
 export { EvaluatedExpression } from './expression'
 
+export type UnparsedExpression = string;
+
 export class ParsedExpression {
 
-    private unparsed_expression_string: string;
+    private unparsed_expression: UnparsedExpression;
     private parsed_expression: expression.Expr;
     private unresolved_variables: string[];
 
-    private constructor(expr_str: string, expr: expression.Expr, unresolved_variables: string[]) {
-        this.unparsed_expression_string = expr_str;
+    private constructor(expr_str: UnparsedExpression, expr: expression.Expr, unresolved_variables: string[]) {
+        this.unparsed_expression = expr_str;
         this.parsed_expression = expr;
         this.unresolved_variables = unresolved_variables;
     }
 
-    public static Parse(expr: string): MyResult<ParsedExpression> {
+    public static Parse(expr: UnparsedExpression): MyResult<ParsedExpression> {
         const matchResult = grammer.match(expr);
 
         if (matchResult.failed()) {
@@ -82,7 +82,7 @@ export class ParsedExpression {
     }
 
     public GetUnparsedString() {
-        return this.unparsed_expression_string;
+        return this.unparsed_expression;
     }
 
     public GetUnresolvedVariables() {

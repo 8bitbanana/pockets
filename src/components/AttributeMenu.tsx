@@ -45,6 +45,12 @@ type AttributeMenuProps = {
 
 class AttributeMenu extends Component<AttributeMenuProps> {
 
+    // add_blank_attribute() {
+    //     let charsheet = useContext(CS);
+
+    //     charsheet.attributes.add("new")
+    // }
+
     render() {
         //const names = ["first test", "second test", "third test"];
 

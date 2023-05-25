@@ -1,4 +1,4 @@
-import { ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
+import { UnparsedExpression, ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
 
 import { MyResult } from "./errors";
 import * as Error from './errors';
@@ -6,7 +6,7 @@ import * as Error from './errors';
 import { ok, err } from 'true-myth/dist/public/result';
 
 type AttrKey = string;
-export type Attribute = ParsedExpression;
+export type Attribute = UnparsedExpression;
 
 export class AttrContainer {
 
@@ -17,7 +17,7 @@ export class AttrContainer {
     }
 
     get_expression_string(attrkey: AttrKey): MyResult<string> {
-        return this.get_attribute(attrkey).map((expr) => expr.GetUnparsedString());
+        return this.get_attribute(attrkey);
     }
 
     private get_attribute(attrkey: AttrKey): MyResult<Attribute> {
@@ -58,9 +58,14 @@ export class AttrContainer {
             if (attr_result.isErr) {
                 return err(attr_result.error);
             }
-            const attr = attr_result.value;
 
-            const dependencies = attr.GetUnresolvedVariables();
+            const parse_result = ParsedExpression.Parse(attr_result.value);
+            if (parse_result.isErr) {
+                return err(parse_result.error);
+            }
+            const parsed = parse_result.value;
+
+            const dependencies = parsed.GetUnresolvedVariables();
 
             let wasDependencyFound = false;
             for (const dependency of dependencies) {
@@ -82,7 +87,7 @@ export class AttrContainer {
 
             // This key has no unresolved dependencies, we're free to eval it
 
-            const evaluation = attr.Evaluate(resolved_variables);
+            const evaluation = parsed.Evaluate(resolved_variables);
 
             if (evaluation.isErr) {
 

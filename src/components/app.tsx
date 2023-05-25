@@ -26,11 +26,7 @@ function createAttrContainer(): MyResult<AttrContainer> {
     ];
 
     for (const kvp of unparsed) {
-        const parsed = parser.ParsedExpression.Parse(kvp[1]);
-        if (parsed.isErr) {
-            return err(parsed.error);
-        }
-        attributes.add(kvp[0], parsed.value);
+        attributes.add(kvp[0], kvp[1]);
     }
 
     return ok(attributes);
