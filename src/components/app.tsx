@@ -15,7 +15,8 @@ import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
 import { StateUpdater, useMemo, useState } from 'preact/hooks';
 
-function createAttrContainer(): AttrContainer {
+// temp
+export function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
     
     let unparsed = [
@@ -38,7 +39,7 @@ export type CharsheetUpdater = {
     setter: StateUpdater<Charsheet>
 }
 
-export let CS: Context<CharsheetUpdater> = createContext({} as CharsheetUpdater);
+//export let CS: Context<CharsheetUpdater> = createContext({} as CharsheetUpdater);
 
 class App extends Component<{}, {}> {
 
@@ -48,19 +49,17 @@ class App extends Component<{}, {}> {
 
     render() {
 
-        const [charsheet, setCharsheet] = useState(new Charsheet(createAttrContainer()));
+        // const [charsheet, setCharsheet] = useState(new Charsheet(createAttrContainer()));
 
-        const updater: CharsheetUpdater = useMemo(() => {
-            return {
-                getter: charsheet,
-                setter: setCharsheet
-            }
-        }, [charsheet]);
+        // const updater: CharsheetUpdater = useMemo(() => {
+        //     return {
+        //         getter: charsheet,
+        //         setter: setCharsheet
+        //     }
+        // }, [charsheet]);
     
         return (
-            <CS.Provider value={updater}>
-                <AttributeMenu />
-            </CS.Provider>
+            <AttributeMenu />
         );
     }
 

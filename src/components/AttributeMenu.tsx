@@ -3,15 +3,15 @@ import * as style from "./AttributeMenu.module.css"
 
 import { AttrContainer, Attribute } from "lib/attribute";
 import { Component } from "preact";
-import { ParsedExpression } from "lib/diceroll/mod";
+import { ParsedExpression, UnparsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
-import { CS } from "./app";
+import { createAttrContainer } from "./app";
 
 type AttributeMenuElementProps = {
     attrkey: string,
-    // attribute: ParsedExpression
+    attribute: UnparsedExpression
 };
 
 // Component<props, state>
@@ -23,16 +23,9 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     render() {
 
-        const cs = useContext(CS);
-
-        const expr_string = cs.getter.attributes.get_expression_string(this.props.attrkey);
-        if (expr_string.isErr) {
-            throw "Invalid attrkey";
-        }
-
         return <div>
             <input type="text" value={this.props.attrkey} />
-            <input type="text" value={expr_string.value} />
+            <input type="text" value={this.props.attribute} />
             <button>Eval</button>
             <button>Delete</button>
         </div>;
@@ -43,19 +36,29 @@ type AttributeMenuProps = {
     // attribute_container: AttrContainer;
 }
 
-class AttributeMenu extends Component<AttributeMenuProps> {
+type AttributeMenuState = {
+    attributes: AttrContainer;
+}
+
+class AttributeMenu extends Component<AttributeMenuProps, AttributeMenuState> {
+
+    constructor() {
+        super();
+
+        this.setState({
+            attributes: createAttrContainer()
+        });
+    }
 
     render() {
         //const names = ["first test", "second test", "third test"];
 
-        const cs = useContext(CS);
-
-        const names = cs.getter.attributes.data;
+        const names = this.state.attributes.data;
 
         const elements: JSXInternal.Element[] = [];
-        cs.getter.attributes.data.forEach((value, key) => {
+        this.state.attributes.data.forEach((value, key) => {
             elements.push(
-                <AttributeMenuElement attrkey={key} />
+                <AttributeMenuElement attrkey={key} attribute={value} />
             )
         });
 
@@ -63,10 +66,10 @@ class AttributeMenu extends Component<AttributeMenuProps> {
             <div>
                 {elements}
                 <button onClick={() => {
-                    cs.setter((old_sheet) => {
-                        let new_sheet = {...old_sheet};
-                        new_sheet.attributes.add("new", "0");
-                        return new_sheet;
+                    this.setState((oldstate) => {
+                        let newstate = {...oldstate};
+                        newstate.attributes.add("new", "0");
+                        return newstate;
                     });
                     //console.log(cs.getter.attributes);
                 }} >Add</button>
