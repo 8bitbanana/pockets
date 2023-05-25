@@ -8,7 +8,7 @@ import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
 import { CS } from "./app";
-import { CA_AddBlankAttribute } from "lib/charsheet_actions";
+import { CA_AddBlankAttribute, CA_DeleteAttribute } from "lib/charsheet_actions";
 
 type AttributeMenuElementProps = {
     name: string,
@@ -23,7 +23,7 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     render() {
 
-        // const { sheet, dispatch } = useContext(CS);
+        const { sheet, dispatch } = useContext(CS);
 
         // const expr_string = sheet.attributes.get_expression_string(this.props.attrkey);
         // if (expr_string.isErr) {
@@ -34,7 +34,9 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
             <input type="text" value={this.props.name} />
             <input type="text" value={this.props.expr} />
             <button>Eval</button>
-            <button>Delete</button>
+            <button onClick={() => {
+                dispatch(new CA_DeleteAttribute(this.props.name));
+            }}>Delete</button>
         </div>;
     }
 }

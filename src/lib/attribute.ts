@@ -20,6 +20,10 @@ export class AttrContainer {
         return this.data.has(name);
     }
 
+    delete(name: string): boolean {
+        return this.data.delete(name);
+    }
+
     get_expression_string(attrkey: AttrKey): MyResult<string> {
         return this.get_attribute(attrkey);
     }

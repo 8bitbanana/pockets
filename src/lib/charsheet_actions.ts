@@ -19,6 +19,18 @@ export class CA_AddBlankAttribute implements CharsheetAction {
     }
 }
 
+export class CA_DeleteAttribute implements CharsheetAction {
+
+    key: string;
+    constructor(key: string) {
+        this.key = key;
+    }
+
+    run(sheet: Charsheet): boolean {
+        return sheet.attributes.delete(this.key);
+    }
+}
+
 export const CharsheetReducer = (old_sheet: Charsheet, action: CharsheetAction) => {
 
     let sheet: Charsheet = {...old_sheet};
