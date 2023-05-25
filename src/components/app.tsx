@@ -10,6 +10,7 @@ import { AttrContainer } from 'lib/attribute';
 import { MyResult } from 'lib/errors';
 import { ok, err } from 'true-myth/dist/public/result';
 import { Charsheet } from 'lib/charsheet';
+import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
 import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
@@ -31,35 +32,6 @@ function createAttrContainer(): AttrContainer {
     }
 
     return attributes;
-}
-
-export enum CharsheetAction {
-    ADD_BLANK_ATTRIBUTE = "ADD_BLANK_ATTRIBUTE"
-}
-
-function CharsheetReducer(old_sheet: Charsheet, action: CharsheetAction) {
-
-    let sheet: Charsheet = {...old_sheet};
-
-    console.info("Action: " + action);
-
-    switch (action) {
-        case CharsheetAction.ADD_BLANK_ATTRIBUTE:
-
-            let count = 0
-            while (count++ < 1000) {
-                const name = "new" + count;
-                if (!sheet.attributes.has(name)) {
-                    sheet.attributes.add(name, "0");
-                    break;
-                }
-            }
-            break; 
-        default:
-            return old_sheet;
-    }
-
-    return sheet;
 }
 
 // export type CharsheetUpdater = {

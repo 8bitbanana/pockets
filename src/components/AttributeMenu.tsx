@@ -7,7 +7,8 @@ import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
-import { CS, CharsheetAction } from "./app";
+import { CS } from "./app";
+import { CharsheetAction } from "lib/charsheet_actions";
 
 type AttributeMenuElementProps = {
     name: string,
