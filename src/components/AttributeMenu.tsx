@@ -8,7 +8,7 @@ import { JSXInternal } from "preact/src/jsx";
 import { useContext } from "preact/hooks";
 
 import { CS } from "./app";
-import { CharsheetAction } from "lib/charsheet_actions";
+import { CA_AddBlankAttribute } from "lib/charsheet_actions";
 
 type AttributeMenuElementProps = {
     name: string,
@@ -63,7 +63,7 @@ class AttributeMenu extends Component<AttributeMenuProps> {
             <div>
                 {elements}
                 <button onClick={() => {
-                    dispatch(CharsheetAction.ADD_BLANK_ATTRIBUTE);
+                    dispatch(new CA_AddBlankAttribute);
                 }} >Add</button>
             </div>
         );
