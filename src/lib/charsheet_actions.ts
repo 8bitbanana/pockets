@@ -43,6 +43,18 @@ export class CA_ModifyAttribute implements CharsheetAction {
     }
 }
 
+export class CA_RenameAttribute implements CharsheetAction {
+    old_key: string;
+    new_key: string;
+    constructor(old_key: string, new_key: string) {
+        this.old_key = old_key; this.new_key = new_key;
+    }
+
+    run(sheet: Charsheet): boolean {
+        return sheet.attributes.rename(this.old_key, this.new_key);
+    }
+}
+
 export const CharsheetReducer = (old_sheet: Charsheet, action: CharsheetAction) => {
 
     let sheet: Charsheet = {...old_sheet};

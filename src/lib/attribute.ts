@@ -10,6 +10,7 @@ export type Attribute = UnparsedExpression;
 
 export class AttrContainer {
 
+    // Todo - store in array of kvps for order but also keep map for lookup
     data: Map<AttrKey, Attribute> = new Map();
 
     add(name: string, expression: Attribute) {
@@ -41,6 +42,23 @@ export class AttrContainer {
 
     delete(name: string): boolean {
         return this.data.delete(name);
+    }
+
+    rename(old_key: string, new_key: string): boolean {
+        // Todo - what would be best to do if this fails when:
+        //  - old_key doesn't exist?
+        //  - new_key currently exists?
+
+        const attr = this.data.get(old_key);
+        if (attr === undefined) {
+            return false;
+        }
+        if (this.data.has(new_key)) {
+            return false;
+        }
+        this.data.delete(old_key);
+        this.data.set(new_key, attr);
+        return true;
     }
 
     get_expression_string(attrkey: AttrKey): MyResult<string> {
