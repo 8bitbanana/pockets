@@ -1,4 +1,5 @@
 import { Charsheet } from "./charsheet";
+import { EvaluatedExpression } from "./diceroll/expression";
 
 export interface CharsheetAction {
     run(sheet: Charsheet): boolean;
@@ -52,6 +53,24 @@ export class CA_RenameAttribute implements CharsheetAction {
 
     run(sheet: Charsheet): boolean {
         return sheet.attributes.rename(this.old_key, this.new_key);
+    }
+}
+
+export class CA_Evaluate implements CharsheetAction {
+    attr_name: string;
+    constructor(attr_name: string) {
+        this.attr_name = attr_name;
+    }
+
+    run(sheet: Charsheet): boolean {
+
+        const eval_result = sheet.attributes.evaluate(this.attr_name);
+        if (eval_result.isErr) {
+            return false;
+        }
+
+        sheet.last_ran_expr = eval_result.value;
+        return true;
     }
 }
 

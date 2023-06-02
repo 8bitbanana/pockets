@@ -37,7 +37,9 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
             <input type="text" value={this.props.expr} onChange={(event)=>{
                 dispatch(new Actions.CA_ModifyAttribute(this.props.name, event.currentTarget.value))
             }}/>
-            <button>Eval</button>
+            <button onClick={() => {
+                dispatch(new Actions.CA_Evaluate(this.props.name))
+            }}>Eval</button>
             <button onClick={() => {
                 dispatch(new Actions.CA_DeleteAttribute(this.props.name));
             }}>Delete</button>

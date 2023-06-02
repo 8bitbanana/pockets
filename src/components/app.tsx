@@ -12,8 +12,8 @@ import { ok, err } from 'true-myth/dist/public/result';
 import { Charsheet } from 'lib/charsheet';
 import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
-import "./AttributeMenu";
 import AttributeMenu from './AttributeMenu';
+import EvalMsgBox from "./EvalMsgBox";
 import { StateUpdater, useMemo, useReducer, useState } from 'preact/hooks';
 
 function createAttrContainer(): AttrContainer {
@@ -66,6 +66,7 @@ class App extends Component<{}, {}> {
         return (
             <CS.Provider value={updater}>
                 <AttributeMenu />
+                <EvalMsgBox expr={sheet.last_ran_expr}/>
             </CS.Provider>
         );
     }
