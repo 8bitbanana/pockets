@@ -1,5 +1,5 @@
 import { Charsheet } from "./charsheet";
-import { EvaluatedExpression } from "./diceroll/expression";
+import { EvaluatedExpression } from "./diceroll/parser/expression";
 
 export interface CharsheetAction {
     run(sheet: Charsheet): boolean;

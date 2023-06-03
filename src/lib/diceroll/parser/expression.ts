@@ -4,21 +4,11 @@ import { ok, err } from 'true-myth/dist/public/result';
 
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
+import { EvaluatedExpression, EvaluationContext } from '../mod'; 
 
 export type ParseContext = {
     unresolved_variables: Set<string>;
 }
-
-export class EvaluatedExpression {
-    result: number = 0;
-    constructor(result: number) {
-        this.result = result;
-    }
-}
-
-export type EvaluationContext = {
-    resolved_variables: Map<string, EvaluatedExpression>;
-};
 
 export abstract class Expr {
 

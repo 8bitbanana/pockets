@@ -6,6 +6,6 @@ test("Hello jest!", () => {
 });
 
 test("Parser functions", () => {
-    const parsed = parser.ParsedExpression.Parse("d20");
+    const parsed = parser.Parse("d20");
     expect(parsed).toBeDefined();
 });

@@ -1,4 +1,4 @@
-import { UnparsedExpression, ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
+import { Parse, Evaluate, UnparsedExpression, ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
 
 import { MyResult } from "./errors";
 import * as Error from './errors';
@@ -104,13 +104,13 @@ export class AttrContainer {
                 return err(attr_result.error);
             }
 
-            const parse_result = ParsedExpression.Parse(attr_result.value);
+            const parse_result = Parse(attr_result.value);
             if (parse_result.isErr) {
                 return err(parse_result.error);
             }
             const parsed = parse_result.value;
 
-            const dependencies = parsed.GetUnresolvedVariables();
+            const dependencies = parsed.unresolved_variables;
 
             let wasDependencyFound = false;
             for (const dependency of dependencies) {
@@ -132,7 +132,7 @@ export class AttrContainer {
 
             // This key has no unresolved dependencies, we're free to eval it
 
-            const evaluation = parsed.Evaluate(resolved_variables);
+            const evaluation = Evaluate(parsed, resolved_variables);
 
             if (evaluation.isErr) {
 
