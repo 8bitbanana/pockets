@@ -2,6 +2,7 @@
   "name": "pockets",
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
+  "type":"module",
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
@@ -40,7 +41,7 @@
   "alias": {
     "$": "./src",
     "lib": "./src/lib",
-    "ohm":"./src/ohm",
+    "ohm": "./src/ohm",
     "react": "preact/compat",
     "react-dom": "preact/compat",
     "react-dom/test-utils": "preact/test-utils",

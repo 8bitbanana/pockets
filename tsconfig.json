@@ -6,6 +6,6 @@
         "jsx": "react-jsx",
         "jsxImportSource": "preact",
         "baseUrl": "./src",
-        
+        // "moduleResolution": "Node16"
     }
 }

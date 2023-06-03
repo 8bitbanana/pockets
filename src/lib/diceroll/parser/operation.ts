@@ -1,5 +1,5 @@
-import { ok, err } from "true-myth/dist/public/result";
-import { MyResult, DivisionByZero } from "lib/errors";
+import { ok, err } from "true-myth/dist/public/result"
+import { MyResult, DivisionByZero } from "lib/errors"
 
 export interface InfixOperation {
     RunInfix(left: number, right: number): MyResult<number>;
