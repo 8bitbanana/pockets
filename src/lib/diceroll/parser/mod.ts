@@ -43,13 +43,13 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
         return new expression.InfixExpression(arg0.tree(this.args.context), new operation.PowerOfOperation, arg2.tree(this.args.context));
     },
     ExprRollInfix_Dice(arg0, arg1, arg2) {
-        return new expression.InfixExpression(arg0.tree(this.args.context), new operation.RollOperation, arg2.tree(this.args.context));
+        return new expression.RollExpression(arg0.tree(this.args.context), arg2.tree(this.args.context));
     },
     ExprPriority_Paren(arg0, arg1, arg2) {
         return arg1.tree(this.args.context);
     },
     ExprPriority_RollPrefix(arg0, arg1) {
-        return new expression.PrefixExpression(new operation.RollOperation, arg1.tree(this.args.context));
+        return new expression.RollExpression(null, arg1.tree(this.args.context));
     },
     ExprPriority_PosPrefix(arg0, arg1) {
         return new expression.PrefixExpression(new operation.AddOperation, arg1.tree(this.args.context));

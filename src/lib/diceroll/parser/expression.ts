@@ -1,4 +1,4 @@
-import { InfixOperation, PrefixOperation } from './operation';
+import { InfixOperation, PrefixOperation, RollOperation } from './operation';
 
 import { ok, err } from 'true-myth/dist/public/result';
 
@@ -26,7 +26,7 @@ export class NumberLiteral extends Literal {
     }
 
     evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
-        return ok(new EvaluatedExpression(this.value));
+        return ok(EvaluatedExpression.FixedLiteral(this.value));
     }
 }
 export class VariableLiteral extends Literal {
@@ -41,7 +41,7 @@ export class VariableLiteral extends Literal {
         const attr = context.resolved_variables.get(this.name);
 
         if (attr !== undefined) {
-            return ok(new EvaluatedExpression(attr.result));
+            return ok(EvaluatedExpression.VariableLiteral(attr.total));
         } else {
             return err(new Error.UnknownVariable(this.name));
         }
@@ -65,9 +65,10 @@ export class InfixExpression extends Expr {
         const rightEval = this.right.evaluate(context);
         if (rightEval.isErr) { return rightEval; }
 
-        const result = this.op.RunInfix(leftEval.value.result, rightEval.value.result);
-
-        return result.map((t) => new EvaluatedExpression(t));
+        const result = this.op.RunInfix(leftEval.value.total, rightEval.value.total);
+        return result.map((total) => {
+            return EvaluatedExpression.Infix(total, leftEval.value, this.op.GetInfixStr(), rightEval.value);
+        });
     }
 }
 export class PrefixExpression extends Expr {
@@ -83,7 +84,39 @@ export class PrefixExpression extends Expr {
         const rightEval = this.right.evaluate(context);
         if (rightEval.isErr) { return rightEval; }
 
-        const result = this.op.RunPrefix(rightEval.value.result);
-        return result.map((t) => new EvaluatedExpression(t));
+        const result = this.op.RunPrefix(rightEval.value.total);
+        return result.map((total) => {
+            return EvaluatedExpression.Prefix(total, this.op.GetPrefixStr(), rightEval.value);
+        });
+    }
+}
+// Rolls are not like regular prefixes/infixes:
+// they are displayed as just a literal rather than a combo of lhs and rhs
+export class RollExpression extends Expr {
+    left: Expr;
+    right: Expr;
+
+    constructor(left: Expr | null, right: Expr) {
+        super();
+        
+        if (left !== null) {
+            this.left = left;
+        } else {
+            this.left = new NumberLiteral(1);
+        }
+
+        this.right = right;
+    }
+    
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        const leftEval = this.left.evaluate(context);
+        if (leftEval.isErr) { return leftEval; }
+        const rightEval = this.right.evaluate(context);
+        if (rightEval.isErr) { return rightEval; }
+
+        const result = RollOperation(leftEval.value.total, rightEval.value.total);
+        return result.map((total) => {
+            return EvaluatedExpression.RollLiteral(total);
+        });
     }
 }

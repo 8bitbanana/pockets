@@ -14,8 +14,20 @@ export class EvalMsgBox extends Component<EvalMsgBoxProps,{}> {
 
     render() {
         if (this.props.expr !== undefined) {
+            console.log(this.props.expr.annex);
+
+            let outstr = "";
+            for (const token of this.props.expr.annex) {
+                if (typeof token === "string") {
+                    outstr += token;
+                }
+                else {
+                    outstr += token.ToString();
+                }
+            }
+
             return <div>
-                {this.props.expr.result}
+                {this.props.expr.total} = {outstr}
             </div>;
         } else {
             return <div>None</div>;
