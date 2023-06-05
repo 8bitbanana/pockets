@@ -1,6 +1,6 @@
 
 import {AttrContainer} from "./attribute";
-import { EvaluatedExpression } from "./diceroll/parser/expression";
+import { EvaluatedExpression } from "./diceroll/mod";
 
 export class Charsheet {
     public attributes: AttrContainer;
