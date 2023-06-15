@@ -142,7 +142,7 @@ export class AttrContainer {
                 return evaluation;
             }
 
-            console.log("Evaluating %s - %d!", attrkey, evaluation.value.result);
+            console.log("Evaluating %s - %d!", attrkey, evaluation.value.total);
             console.log(evaluation.value);
             
             // If this is the key we asked for, return it
@@ -154,7 +154,7 @@ export class AttrContainer {
             resolved_variables.set(attrkey, evaluation.value);
         }
     
-        throw "unreachable";
+        return err(new Error.Timeout);
     
     }
 }

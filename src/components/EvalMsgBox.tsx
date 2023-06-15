@@ -1,10 +1,11 @@
 
 import { EvaluatedExpression } from "lib/diceroll/mod";
+import { MyResult } from "lib/errors";
 import { Component } from "preact";
 
-type EvalMsgBoxProps = {
-    expr?: EvaluatedExpression;
-}
+type EvalMsgBoxProps ={
+    eval_result?: MyResult<EvaluatedExpression>;
+};
 
 export class EvalMsgBox extends Component<EvalMsgBoxProps,{}> {
 
@@ -13,23 +14,35 @@ export class EvalMsgBox extends Component<EvalMsgBoxProps,{}> {
     }
 
     render() {
-        if (this.props.expr !== undefined) {
-            console.log(this.props.expr.annex);
+        if (this.props.eval_result !== undefined) {
 
-            let outstr = "";
-            for (const token of this.props.expr.annex) {
-                if (typeof token === "string") {
-                    outstr += token;
+            if (this.props.eval_result.isOk) {
+                // The evaluation was a success
+                console.log(this.props.eval_result.value.annex);
+
+                let outstr = "";
+                for (const token of this.props.eval_result.value.annex) {
+                    if (typeof token === "string") {
+                        outstr += token;
+                    }
+                    else {
+                        outstr += token.ToString();
+                    }
                 }
-                else {
-                    outstr += token.ToString();
-                }
+
+                return <div>
+                    {this.props.eval_result.value.total} = {outstr}
+                </div>;
+            } else {
+                // The evaluation errored
+
+                return <div>
+                    Error: {this.props.eval_result.error.Display()}
+                </div>
             }
-
-            return <div>
-                {this.props.expr.total} = {outstr}
-            </div>;
+            
         } else {
+            // Nothing has been evaluated yet
             return <div>None</div>;
         }
     }

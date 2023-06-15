@@ -66,7 +66,7 @@ class App extends Component<{}, {}> {
         return (
             <CS.Provider value={updater}>
                 <AttributeMenu />
-                <EvalMsgBox expr={sheet.last_ran_expr}/>
+                <EvalMsgBox eval_result={sheet.last_ran_expr}/>
             </CS.Provider>
         );
     }

@@ -65,11 +65,7 @@ export class CA_Evaluate implements CharsheetAction {
     run(sheet: Charsheet): boolean {
 
         const eval_result = sheet.attributes.evaluate(this.attr_name);
-        if (eval_result.isErr) {
-            return false;
-        }
-
-        sheet.last_ran_expr = eval_result.value;
+        sheet.last_ran_expr = eval_result;
         return true;
     }
 }
