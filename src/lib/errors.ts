@@ -1,15 +1,38 @@
 
 import { Result } from 'true-myth';
 
-// Todo - store parent errors so we can walk up the stack
-export interface Error {
-    Display(): string;
+export class ErrorContext {
+
+    display: string;
+
+    constructor(display: string) {
+        this.display = display;
+    }
 }
 
-export class UnknownVariable implements Error {
+export abstract class Error {
+    context_stack: ErrorContext[] = [];
+
+    abstract Display(): string;
+
+    PrintContext(): string {
+        let out = "";
+        this.context_stack.forEach(element => {
+            out += element.display + "\n";
+        });
+        return out;
+    }
+
+    PushContext(context: ErrorContext): void {
+        this.context_stack.push(context);
+    }
+}
+
+export class UnknownVariable extends Error {
     name: string;
 
     constructor(name: string) {
+        super();
         this.name = name;
     }
 
@@ -18,10 +41,11 @@ export class UnknownVariable implements Error {
     }
 };
 
-export class AttributeCycle implements Error {
+export class AttributeCycle extends Error {
     name: string;
 
     constructor(name: string) {
+        super();
         this.name = name;
     }
 
@@ -30,19 +54,19 @@ export class AttributeCycle implements Error {
     }
 };
 
-export class Timeout implements Error {
+export class Timeout extends Error {
     Display(): string {
         return `Timeout`
     }
 };
 
-export class DivisionByZero implements Error {
+export class DivisionByZero extends Error {
     Display(): string {
         return `Division by zero`;
     }
 };
 
-export class ParsingError implements Error {
+export class ParsingError extends Error {
     description: string | null = null;
 
     Display(): string {
@@ -55,3 +79,12 @@ export class ParsingError implements Error {
 }
 
 export type MyResult<T> = Result<T, Error>;
+
+export function add_context<T>(result: MyResult<T>, context_display: string): MyResult<T> {
+
+    if (result.isErr) {
+        result.error.PushContext(new ErrorContext(context_display));
+    }
+    
+    return result;
+}

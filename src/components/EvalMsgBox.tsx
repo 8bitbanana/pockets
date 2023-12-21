@@ -37,7 +37,8 @@ export class EvalMsgBox extends Component<EvalMsgBoxProps,{}> {
                 // The evaluation errored
 
                 return <div>
-                    Error: {this.props.eval_result.error.Display()}
+                    Error: {this.props.eval_result.error.Display()}<br/>
+                    {this.props.eval_result.error.PrintContext()}
                 </div>
             }
             

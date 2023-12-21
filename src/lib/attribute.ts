@@ -1,6 +1,6 @@
 import { Parse, Evaluate, UnparsedExpression, ParsedExpression, EvaluatedExpression } from "lib/diceroll/mod";
 
-import { MyResult } from "./errors";
+import { MyResult, add_context } from "./errors";
 import * as Error from './errors';
 
 import { ok, err } from 'true-myth/dist/public/result';
@@ -72,6 +72,14 @@ export class AttrContainer {
         }
         return ok(attr);
     }
+
+    // add_dependencies_to_error_context(result: MyResult<EvaluatedExpression>, stack: AttrKey[]) {
+    //     if (result.isErr) {
+    //         stack.forEach(element => {
+                
+    //         });
+    //     }
+    // }
 
     evaluate(attrToEvaluate: AttrKey): MyResult<EvaluatedExpression> {
 
