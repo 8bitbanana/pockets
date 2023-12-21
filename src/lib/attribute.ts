@@ -73,37 +73,26 @@ export class AttrContainer {
         return ok(attr);
     }
 
-    // add_dependencies_to_error_context(result: MyResult<EvaluatedExpression>, stack: AttrKey[]) {
-    //     if (result.isErr) {
-    //         stack.forEach(element => {
-                
-    //         });
-    //     }
-    // }
-
-    evaluate(attrToEvaluate: AttrKey): MyResult<EvaluatedExpression> {
-
-        // const attr = this.data.get(attrToEvaluate);
-        // if (attr === undefined) { return err( new Error.UnknownVariable(attrToEvaluate) ); }
-
-        let resolved_variables: Map<string, EvaluatedExpression> = new Map;
-
-        let stack: AttrKey[] = [attrToEvaluate];
-        // stack.concat(Array.from(attr.GetUnresolvedVariables()));
-
-        let safety = 1_000_000;
-        while (safety-- > 0) {
-            const attrkey = stack.pop();
-            if (attrkey === undefined) {
-                break;
+    private do_evaluation(
+        attrkey: AttrKey,
+        VisitedAttrs: Set<AttrKey>,
+        ResolvedVariables: Map<AttrKey, EvaluatedExpression>,
+        RecurseCount: number
+        ): MyResult<EvaluatedExpression>
+        {
+            if (RecurseCount > 1000)
+            {
+                return err(new Error.Timeout);
             }
 
-            if (resolved_variables.has(attrkey)) {
-                continue;
+            const resolved_var = ResolvedVariables.get(attrkey);
+            if (resolved_var !== undefined)
+            {
+                return ok(resolved_var);
             }
 
-            // todo - Improve performance (set of visited attrs?)
-            if (stack.includes(attrkey)) {
+            if (VisitedAttrs.has(attrkey))
+            {
                 return err(new Error.AttributeCycle(attrkey));
             }
 
@@ -118,29 +107,24 @@ export class AttrContainer {
             }
             const parsed = parse_result.value;
 
+            VisitedAttrs.add(attrkey);
+
             const dependencies = parsed.unresolved_variables;
-
-            let wasDependencyFound = false;
             for (const dependency of dependencies) {
-                if (!resolved_variables.has(dependency)) {
-
-                    // This key has a dependency which isn't resolved yet.
-                    // Push it back onto the stack, push it's dependency onto the stack,
-                    // then continue the while loop to eval the dependency (since its on top of the stack).
-
-                    stack.push(attrkey);
-                    stack.push(dependency);
-                    wasDependencyFound = true;
-                    break;
+                const result = add_context(
+                    this.do_evaluation(dependency, VisitedAttrs, ResolvedVariables, RecurseCount + 1),
+                    `Evaluating dependency \"${dependency}\"`);
+                if (result.isErr)
+                {
+                    console.log("a");
+                    return result;
                 }
-            }
-            if (wasDependencyFound) {
-                continue;
+                ResolvedVariables.set(dependency, result.value);
             }
 
-            // This key has no unresolved dependencies, we're free to eval it
+            VisitedAttrs.delete(attrkey);
 
-            const evaluation = Evaluate(parsed, resolved_variables);
+            const evaluation = Evaluate(parsed, ResolvedVariables);
 
             if (evaluation.isErr) {
 
@@ -152,17 +136,14 @@ export class AttrContainer {
 
             console.log("Evaluating %s - %d!", attrkey, evaluation.value.total);
             console.log(evaluation.value);
-            
-            // If this is the key we asked for, return it
-            if (attrkey === attrToEvaluate) {
 
-                return evaluation;
-            }
-
-            resolved_variables.set(attrkey, evaluation.value);
+            return evaluation;
         }
-    
-        return err(new Error.Timeout);
-    
+
+    evaluate(attrToEvaluate: AttrKey): MyResult<EvaluatedExpression> {
+
+        return add_context(this.do_evaluation(
+            attrToEvaluate, new Set<string>, new Map<string, EvaluatedExpression>, 0
+        ), `Evaluating root attribute \"${attrToEvaluate}\"`);
     }
 }

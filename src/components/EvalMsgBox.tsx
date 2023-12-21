@@ -2,6 +2,7 @@
 import { EvaluatedExpression } from "lib/diceroll/mod";
 import { MyResult } from "lib/errors";
 import { Component } from "preact";
+import { JSXInternal } from "preact/src/jsx";
 
 type EvalMsgBoxProps ={
     eval_result?: MyResult<EvaluatedExpression>;
@@ -38,7 +39,12 @@ export class EvalMsgBox extends Component<EvalMsgBoxProps,{}> {
 
                 return <div>
                     Error: {this.props.eval_result.error.Display()}<br/>
-                    {this.props.eval_result.error.PrintContext()}
+
+                    <ul>
+                    {this.props.eval_result.error.context_stack.map(
+                        (ctx) => { return <li>{ctx.display}</li>; }
+                    )}
+                    </ul>
                 </div>
             }
             

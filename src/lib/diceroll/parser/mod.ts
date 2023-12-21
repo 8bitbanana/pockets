@@ -71,7 +71,7 @@ export function Parse(expr: UnparsedExpression): MyResult<ParsedExpression> {
     const matchResult = grammer.match(expr);
 
     if (matchResult.failed()) {
-        return err(new Error.ParsingError);
+        return err(new Error.ParsingError(matchResult.shortMessage));
     }
 
     let parse_context: expression.ParseContext = { unresolved_variables: new Set };

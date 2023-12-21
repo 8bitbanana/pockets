@@ -65,10 +65,7 @@ export class CA_Evaluate implements CharsheetAction {
 
     run(sheet: Charsheet): boolean {
 
-        const eval_result = add_context(
-            sheet.attributes.evaluate(this.attr_name),
-            `Evaluating root attribute \"${this.attr_name}\"`
-        );
+        const eval_result = sheet.attributes.evaluate(this.attr_name);
         
         sheet.last_ran_expr = eval_result;
         return true;

@@ -69,6 +69,11 @@ export class DivisionByZero extends Error {
 export class ParsingError extends Error {
     description: string | null = null;
 
+    constructor(desc: string | null = null) {
+        super();
+        this.description = desc;
+    }
+
     Display(): string {
         if (this.description !== null) {
             return `Parsing error \"${this.description}\"`;
