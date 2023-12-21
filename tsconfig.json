@@ -7,5 +7,10 @@
         "jsxImportSource": "preact",
         "baseUrl": "./src",
         // "moduleResolution": "Node16"
+        "paths": {
+            "react": ["./node_modules/preact/compa"],
+            "react-dom": ["./node_modules/preact/compat"]
+        },
+        "skipLibCheck": true
     }
 }

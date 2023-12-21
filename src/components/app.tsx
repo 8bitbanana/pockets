@@ -15,6 +15,7 @@ import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 import AttributeMenu from './AttributeMenu';
 import EvalMsgBox from "./EvalMsgBox";
 import { StateUpdater, useMemo, useReducer, useState } from 'preact/hooks';
+import DraggableExample from "components/DraggableExample";
 
 function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
@@ -64,7 +65,9 @@ class App extends Component<{}, {}> {
         }, [sheet]);
     
         return (
+            
             <CS.Provider value={updater}>
+                <DraggableExample />
                 <AttributeMenu />
                 <EvalMsgBox eval_result={sheet.last_ran_expr}/>
             </CS.Provider>
