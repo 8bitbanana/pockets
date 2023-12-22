@@ -1,20 +1,17 @@
-import * as ohm from 'ohm-js';
-import * as ohm_extras from 'ohm-js/extras';
-import * as parser from 'lib/diceroll/mod';
-
 var obj:any = {};
 obj = window;
 
 import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer } from 'lib/attribute';
-import { MyResult } from 'lib/errors';
-import { ok, err } from 'true-myth/dist/es/result';
 import { Charsheet } from 'lib/charsheet';
 import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
 import AttributeMenu from './AttributeMenu';
 import EvalMsgBox from "./EvalMsgBox";
 import { StateUpdater, useMemo, useReducer, useState } from 'preact/hooks';
+
+import { Button } from '@mui/joy';
+//import '@fontsource/inter';
 
 function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
@@ -33,11 +30,6 @@ function createAttrContainer(): AttrContainer {
 
     return attributes;
 }
-
-// export type CharsheetUpdater = {
-//     getter: Charsheet;
-//     setter: StateUpdater<Charsheet>
-// }
 
 export type CharsheetUpdater = {
     sheet: Charsheet,
@@ -67,6 +59,7 @@ class App extends Component<{}, {}> {
             <CS.Provider value={updater}>
                 <AttributeMenu />
                 <EvalMsgBox eval_result={sheet.last_ran_expr}/>
+                <Button variant="solid">Hello world!</Button>
             </CS.Provider>
         );
     }

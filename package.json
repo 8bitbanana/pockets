@@ -2,7 +2,7 @@
   "name": "pockets",
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
@@ -16,6 +16,10 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.16",
+    "@mui/joy": "^5.0.0-beta.19",
     "comlink": "^4.4.1",
     "ohm-js": "^17.1.0",
     "preact": "^10.19.3",
