@@ -8,7 +8,7 @@ obj = window;
 import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer } from 'lib/attribute';
 import { MyResult } from 'lib/errors';
-import { ok, err } from 'true-myth/dist/public/result';
+import { ok, err } from 'true-myth/dist/es/result';
 import { Charsheet } from 'lib/charsheet';
 import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 

@@ -5,7 +5,7 @@ import grammer, { DicerollSemantics } from "ohm/diceroll.ohm-bundle";
 
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
-import { ok, err } from "true-myth/dist/public/result";
+import { ok, err } from "true-myth/dist/es/result";
 
 export type UnparsedExpression = string;
 

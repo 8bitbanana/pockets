@@ -1,6 +1,6 @@
 import { InfixOperation, PrefixOperation, RollOperation } from './operation';
 
-import { ok, err } from 'true-myth/dist/public/result';
+import { ok, err } from 'true-myth/dist/es/result';
 
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";

@@ -2,8 +2,7 @@ import { Parse, Evaluate, UnparsedExpression, ParsedExpression, EvaluatedExpress
 
 import { MyResult, add_context } from "./errors";
 import * as Error from './errors';
-
-import { ok, err } from 'true-myth/dist/public/result';
+import { ok, err } from "true-myth/dist/es/result";
 
 type AttrKey = string;
 export type Attribute = UnparsedExpression;

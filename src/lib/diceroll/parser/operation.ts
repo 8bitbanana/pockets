@@ -1,4 +1,4 @@
-import { ok, err } from "true-myth/dist/public/result"
+import { ok, err } from "true-myth/dist/es/result"
 import { MyResult, DivisionByZero } from "lib/errors"
 
 export interface InfixOperation {
