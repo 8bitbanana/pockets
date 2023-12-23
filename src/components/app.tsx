@@ -8,10 +8,9 @@ import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
 import AttributeMenu from './AttributeMenu';
 import EvalMsgBox from "./EvalMsgBox";
-import { StateUpdater, useMemo, useReducer, useState } from 'preact/hooks';
+import { useMemo, useReducer } from 'preact/hooks';
 
-import { Button } from '@mui/joy';
-//import '@fontsource/inter';
+import { Button, Tab, TabList, TabPanel, Tabs } from '@mui/joy';
 
 function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
@@ -57,9 +56,19 @@ class App extends Component<{}, {}> {
     
         return (
             <CS.Provider value={updater}>
-                <AttributeMenu />
-                <EvalMsgBox eval_result={sheet.last_ran_expr}/>
-                <Button variant="solid">Hello world!</Button>
+                <Tabs defaultValue={0}>
+                    <TabList>
+                        <Tab variant='plain' color='neutral'>Attributes</Tab>
+                        <Tab variant='plain' color='neutral'>Button Test</Tab>
+                    </TabList>
+                    <TabPanel value={0}>
+                        <AttributeMenu />
+                        <EvalMsgBox eval_result={sheet.last_ran_expr}/>
+                    </TabPanel>
+                    <TabPanel value={1}>
+                        <Button variant="solid">Hello world!</Button>
+                    </TabPanel>
+                </Tabs>
             </CS.Provider>
         );
     }
