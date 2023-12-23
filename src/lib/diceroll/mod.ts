@@ -1,6 +1,7 @@
 import { MyResult } from "lib/errors";
 
 import { ParsedExpression } from "./parser/mod";
+import { Diceroll, DicerollSet } from "lib/diceroll";
 
 abstract class EvaluatedLiteral {
 
@@ -38,21 +39,25 @@ export class EvaluatedFixed extends EvaluatedLiteral {
     }
 }
 
-type DicerollSpec = {
-    result: number,
-    size: number
-}
 
 export class EvaluatedDiceroll extends EvaluatedLiteral {
-    spec: DicerollSpec;
+    spec: Diceroll;
 
-    constructor(spec: DicerollSpec) {
+    constructor(spec: Diceroll) {
         super();
         this.spec = spec;
     }
 
     ToString(): string {
-        return `[${this.spec.result.toString()}]`;
+        if (this.spec.crit_success) {
+            return `[${this.spec.result.toString()} CS]`;
+        }
+        else if (this.spec.crit_fail) {
+            return `[${this.spec.result.toString()} CF]`;
+        }
+        else {
+            return `[${this.spec.result.toString()}]`;
+        }
     }
 }
 
@@ -72,10 +77,10 @@ export class EvaluatedExpression {
         return new EvaluatedExpression(value, [new EvaluatedFixed(value)]);
     }
 
-    static RollLiteral(value: number, dice_size: number, results: number[]) {
+    static RollLiteral(rolls: DicerollSet) {
 
-        return new EvaluatedExpression(value, results.map((result) => {
-            return new EvaluatedDiceroll({result, size: dice_size});
+        return new EvaluatedExpression(rolls.total, rolls.results.map((result) => {
+            return new EvaluatedDiceroll(result);
         }))
     }
 

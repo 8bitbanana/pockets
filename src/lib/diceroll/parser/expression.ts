@@ -116,7 +116,7 @@ export class RollExpression extends Expr {
 
         const result = RollOperation(leftEval.value.total, rightEval.value.total);
         return result.map((diceroll) => {
-            return EvaluatedExpression.RollLiteral(diceroll.total, leftEval.value.total, diceroll.results);
+            return EvaluatedExpression.RollLiteral(diceroll);
         });
     }
 }

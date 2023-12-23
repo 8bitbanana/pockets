@@ -63,7 +63,7 @@ class App extends Component<{}, {}> {
                     </TabList>
                     <TabPanel value={0}>
                         <AttributeMenu />
-                        <EvalContainer eval_result={sheet.last_ran_expr} show_tree={true}/>
+                        <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                     </TabPanel>
                     <TabPanel value={1}>
                         <Button variant="solid">Hello world!</Button>
