@@ -2,29 +2,61 @@ import { MyResult } from "lib/errors";
 
 import { ParsedExpression } from "./parser/mod";
 
-class EvaluatedLiteral {
-    value: number;
-    private constructor(value: number) {
-        this.value = value;
-    }
-    static FixedNumber(value: number) {
-        return new EvaluatedLiteral(value);
-    }
-    // Todo: flesh out with crits, ignores, etc.
-    static Diceroll(value: number) {
-        return new EvaluatedLiteral(value);
-    }
-    // Todo: should also store variable name
-    static Variable(value: number) {
-        return new EvaluatedLiteral(value);
+abstract class EvaluatedLiteral {
+
+    abstract ToString(): string;
+
+}
+
+export class EvaluatedAttribute extends EvaluatedLiteral {
+    name: string;
+    annex: EvaluatedExpressionToken[];
+    total: number;
+
+    constructor(total: number, name: string, annex: EvaluatedExpressionToken[]) {
+        super();
+        this.name = name;
+        this.annex = annex;
+        this.total = total;
     }
 
     ToString(): string {
-        return String(this.value);
+        return `${this.total} [${this.name}]`;
     }
 }
 
-type EvaluatedExpressionToken = string | EvaluatedLiteral;
+export class EvaluatedFixed extends EvaluatedLiteral {
+    value: number;
+
+    constructor(value: number) {
+        super();
+        this.value = value;
+    }
+
+    ToString(): string {
+        return this.value.toString();
+    }
+}
+
+type DicerollSpec = {
+    result: number,
+    size: number
+}
+
+export class EvaluatedDiceroll extends EvaluatedLiteral {
+    spec: DicerollSpec;
+
+    constructor(spec: DicerollSpec) {
+        super();
+        this.spec = spec;
+    }
+
+    ToString(): string {
+        return `[${this.spec.result.toString()}]`;
+    }
+}
+
+export type EvaluatedExpressionToken = string | EvaluatedLiteral;
 
 export class EvaluatedExpression {
 
@@ -37,13 +69,18 @@ export class EvaluatedExpression {
     }
 
     static FixedLiteral(value: number) {
-        return new EvaluatedExpression(value, [EvaluatedLiteral.FixedNumber(value)]);
+        return new EvaluatedExpression(value, [new EvaluatedFixed(value)]);
     }
-    static RollLiteral(value: number) {
-        return new EvaluatedExpression(value, [EvaluatedLiteral.Diceroll(value)]);
+
+    static RollLiteral(value: number, dice_size: number, results: number[]) {
+
+        return new EvaluatedExpression(value, results.map((result) => {
+            return new EvaluatedDiceroll({result, size: dice_size});
+        }))
     }
-    static VariableLiteral(value: number) {
-        return new EvaluatedExpression(value, [EvaluatedLiteral.Variable(value)]);
+
+    static AttributeLiteral(value: number, attribute_name: string, attribute_inner: EvaluatedExpressionToken[]) {
+        return new EvaluatedExpression(value, [new EvaluatedAttribute(value, attribute_name, attribute_inner)]);
     }
 
     static Infix(new_total: number, lhs: EvaluatedExpression, sep: string, rhs: EvaluatedExpression) {
@@ -57,6 +94,27 @@ export class EvaluatedExpression {
         let new_annex: EvaluatedExpressionToken[] = [sep];
         new_annex = new_annex.concat(rhs.annex);
         return new EvaluatedExpression(new_total, new_annex);
+    }
+
+    private static print_annex_inner(annex: EvaluatedExpressionToken[]): string {
+        let outstr = "";
+        for (const token of annex) {
+            if (typeof token === "string") {
+                outstr += token;
+            }
+            else if (token instanceof EvaluatedAttribute) {
+                outstr += this.print_annex_inner(token.annex);
+            }
+            else {
+                outstr += token.ToString();
+            }
+        }
+
+        return outstr;
+    }
+
+    print_annex(): string {
+        return EvaluatedExpression.print_annex_inner(this.annex);
     }
 }
 

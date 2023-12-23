@@ -29,7 +29,7 @@ export class NumberLiteral extends Literal {
         return ok(EvaluatedExpression.FixedLiteral(this.value));
     }
 }
-export class VariableLiteral extends Literal {
+export class AttributeLiteral extends Literal {
     name: string;
     constructor(name: string) {
         super();
@@ -41,7 +41,7 @@ export class VariableLiteral extends Literal {
         const attr = context.resolved_variables.get(this.name);
 
         if (attr !== undefined) {
-            return ok(EvaluatedExpression.VariableLiteral(attr.total));
+            return ok(EvaluatedExpression.AttributeLiteral(attr.total, this.name, attr.annex));
         } else {
             return err(new Error.UnknownVariable(this.name));
         }
@@ -115,8 +115,8 @@ export class RollExpression extends Expr {
         if (rightEval.isErr) { return rightEval; }
 
         const result = RollOperation(leftEval.value.total, rightEval.value.total);
-        return result.map((total) => {
-            return EvaluatedExpression.RollLiteral(total);
+        return result.map((diceroll) => {
+            return EvaluatedExpression.RollLiteral(diceroll.total, leftEval.value.total, diceroll.results);
         });
     }
 }

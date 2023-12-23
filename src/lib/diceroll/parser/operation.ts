@@ -84,16 +84,24 @@ export class PowerOfOperation implements InfixOperation {
     }
 }
 
-export function RollOperation(left: number, right: number): MyResult<number> {
+export type RollOperationReturn = {
+    total: number,
+    results: number[]
+}
+
+export function RollOperation(left: number, right: number): MyResult<RollOperationReturn> {
 
     if (left == 0 || right == 0) {
-        return ok(0);
+        return ok({total: 0, results: []});
     }
 
+    var results = [];
     var total = 0;
     for (var i = 0; i < left; i++) {
-        total += Math.floor(Math.random() * right) + 1;
+        const result = Math.floor(Math.random() * right) + 1;
+        total += result;
+        results.push(result);
     }
 
-    return ok(total);
+    return ok({total, results});
 }

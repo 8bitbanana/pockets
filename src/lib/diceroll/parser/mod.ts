@@ -63,7 +63,7 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
     Literal_Variable(arg0, arg1, arg2) {
 
         this.args.context.unresolved_variables.add(arg1.sourceString);
-        return new expression.VariableLiteral(arg1.sourceString);
+        return new expression.AttributeLiteral(arg1.sourceString);
     }
 });
 

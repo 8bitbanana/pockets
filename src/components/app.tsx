@@ -7,7 +7,7 @@ import { Charsheet } from 'lib/charsheet';
 import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
 import AttributeMenu from './AttributeMenu';
-import EvalMsgBox from "./EvalMsgBox";
+import EvalContainer from "./eval/EvalContainer";
 import { useMemo, useReducer } from 'preact/hooks';
 
 import { Button, Tab, TabList, TabPanel, Tabs } from '@mui/joy';
@@ -63,7 +63,7 @@ class App extends Component<{}, {}> {
                     </TabList>
                     <TabPanel value={0}>
                         <AttributeMenu />
-                        <EvalMsgBox eval_result={sheet.last_ran_expr}/>
+                        <EvalContainer eval_result={sheet.last_ran_expr} show_tree={true}/>
                     </TabPanel>
                     <TabPanel value={1}>
                         <Button variant="solid">Hello world!</Button>
