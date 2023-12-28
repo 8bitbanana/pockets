@@ -10,7 +10,10 @@ import AttributeMenu from './AttributeMenu';
 import EvalContainer from "./eval/EvalContainer";
 import { useMemo, useReducer } from 'preact/hooks';
 
-import { Button, Tab, TabList, TabPanel, Tabs } from '@mui/joy';
+import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
+import { CssVarsProvider } from '@mui/joy/styles';
+import PkTextField from './PkTextField';
+import { pocketsTheme } from './themes';
 
 function createAttrContainer(): AttrContainer {
     let attributes = new AttrContainer;
@@ -55,21 +58,24 @@ class App extends Component<{}, {}> {
         }, [sheet]);
     
         return (
+            <CssVarsProvider theme={pocketsTheme}>
             <CS.Provider value={updater}>
                 <Tabs defaultValue={0}>
                     <TabList>
+                        <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
-                        <Tab variant='plain' color='neutral'>Button Test</Tab>
                     </TabList>
                     <TabPanel value={0}>
+                        <PkTextField text="Hello world"></PkTextField>
+                    </TabPanel>
+                    <TabPanel value={1}>
                         <AttributeMenu />
                         <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                     </TabPanel>
-                    <TabPanel value={1}>
-                        <Button variant="solid">Hello world!</Button>
-                    </TabPanel>
+                    
                 </Tabs>
             </CS.Provider>
+            </CssVarsProvider>
         );
     }
 

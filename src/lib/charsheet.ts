@@ -8,7 +8,10 @@ export class Charsheet {
 
     public last_ran_expr?: MyResult<EvaluatedExpression>;
 
+    public edit_mode: boolean;
+
     constructor(attributes: AttrContainer) {
         this.attributes = attributes;
+        this.edit_mode = true;
     }
 }
