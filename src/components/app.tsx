@@ -10,12 +10,15 @@ import AttributeMenu from './AttributeMenu';
 import EvalContainer from "./eval/EvalContainer";
 import { useMemo, useReducer } from 'preact/hooks';
 
-import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
+import { Checkbox, Tab, TabList, TabPanel, Tabs } from '@mui/joy';
 import { CssVarsProvider } from '@mui/joy/styles';
 import PkTextField from './PkTextField';
 import { pocketsTheme } from './themes';
+import PkEditModeToggle from './PkEditModeToggle';
+import { TextFieldContainer } from 'lib/TextFieldContainer';
 
-function createAttrContainer(): AttrContainer {
+
+function createCharsheet(): Charsheet {
     let attributes = new AttrContainer;
     
     let unparsed = [
@@ -30,7 +33,10 @@ function createAttrContainer(): AttrContainer {
         attributes.add(kvp[0], kvp[1]);
     }
 
-    return attributes;
+    let text_fields = new TextFieldContainer;
+    text_fields.add("test", "Hello world!");
+
+    return new Charsheet(attributes, text_fields);
 }
 
 export type CharsheetUpdater = {
@@ -48,7 +54,7 @@ class App extends Component<{}, {}> {
 
     render() {
 
-        const [sheet, dispatch] = useReducer(CharsheetReducer, new Charsheet(createAttrContainer()));
+        const [sheet, dispatch] = useReducer(CharsheetReducer, createCharsheet());
 
         const updater: CharsheetUpdater = useMemo(() => {
             return {
@@ -66,7 +72,12 @@ class App extends Component<{}, {}> {
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
                     </TabList>
                     <TabPanel value={0}>
-                        <PkTextField text="Hello world"></PkTextField>
+                        <div>
+                        <PkEditModeToggle />
+                        </div>
+                        <div>
+                        <PkTextField textfieldkey="test"></PkTextField>
+                        </div>
                     </TabPanel>
                     <TabPanel value={1}>
                         <AttributeMenu />

@@ -3,62 +3,12 @@ import { Parse, Evaluate, UnparsedExpression, ParsedExpression, EvaluatedExpress
 import { MyResult, add_context } from "./errors";
 import * as Error from './errors';
 import { ok, err } from "true-myth/dist/es/result";
+import { ContainerBase } from "./ContainerBase";
 
 type AttrKey = string;
 export type Attribute = UnparsedExpression;
 
-export class AttrContainer {
-
-    // Todo - store in array of kvps for order but also keep map for lookup
-    data: Map<AttrKey, Attribute> = new Map();
-
-    add(name: string, expression: Attribute) {
-        // Todo - fail if already exists
-
-        this.data.set(name, expression);
-    }
-
-    modify(name: string, new_attr: Attribute): boolean {
-        const attr_result = this.get_attribute(name);
-        if (attr_result.isErr) {
-            // Todo - this should fail loud: CharsheetAction::Run should
-            // return a Result to be fallable
-            return false;
-        }
-
-        let old_attr = attr_result.value;
-        if (old_attr === new_attr) {
-            return false;
-        }
-
-        this.data.set(name, new_attr);
-        return true;
-    }
-
-    has(name: string): boolean {
-        return this.data.has(name);
-    }
-
-    delete(name: string): boolean {
-        return this.data.delete(name);
-    }
-
-    rename(old_key: string, new_key: string): boolean {
-        // Todo - what would be best to do if this fails when:
-        //  - old_key doesn't exist?
-        //  - new_key currently exists?
-
-        const attr = this.data.get(old_key);
-        if (attr === undefined) {
-            return false;
-        }
-        if (this.data.has(new_key)) {
-            return false;
-        }
-        this.data.delete(old_key);
-        this.data.set(new_key, attr);
-        return true;
-    }
+export class AttrContainer extends ContainerBase<AttrKey, Attribute> {
 
     get_expression_string(attrkey: AttrKey): MyResult<string> {
         return this.get_attribute(attrkey);

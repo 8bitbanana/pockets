@@ -72,6 +72,33 @@ export class CA_Evaluate implements CharsheetAction {
     }
 }
 
+export class CA_SetEditMode implements CharsheetAction {
+    new_edit_mode: boolean;
+    constructor(new_edit_mode: boolean) {
+        this.new_edit_mode = new_edit_mode;
+    }
+
+    run(sheet: Charsheet): boolean {
+        if (sheet.edit_mode !== this.new_edit_mode) {
+            sheet.edit_mode = this.new_edit_mode;
+            return true;
+        }
+        return false;
+    }
+}
+
+export class CA_ModifyTextField implements CharsheetAction {
+    key: string;
+    new_text: string;
+    constructor(key: string, new_text: string) {
+        this.key = key; this.new_text = new_text;
+    }
+
+    run(sheet: Charsheet): boolean {
+        return sheet.text_fields.modify(this.key, this.new_text);
+    }
+}
+
 export const CharsheetReducer = (old_sheet: Charsheet, action: CharsheetAction) => {
 
     let sheet: Charsheet = {...old_sheet};
