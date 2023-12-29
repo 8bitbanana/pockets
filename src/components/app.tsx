@@ -1,6 +1,8 @@
 var obj:any = {};
 obj = window;
 
+import 'preact/debug'
+
 import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer } from 'lib/attribute';
 import { Charsheet } from 'lib/charsheet';
@@ -16,6 +18,8 @@ import PkTextField from './PkTextField';
 import { pocketsTheme } from './themes';
 import PkEditModeToggle from './PkEditModeToggle';
 import { TextFieldContainer } from 'lib/TextFieldContainer';
+import PkSignalTest from './signal_testing/PkSignalTest';
+import { DeepSignal, deepSignal } from 'deepsignal';
 
 
 function createCharsheet(): Charsheet {
@@ -66,10 +70,11 @@ class App extends Component<{}, {}> {
         return (
             <CssVarsProvider theme={pocketsTheme}>
             <CS.Provider value={updater}>
-                <Tabs defaultValue={0}>
+                <Tabs defaultValue={2}>
                     <TabList>
                         <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
+                        <Tab variant='plain' color="neutral">Signal Test</Tab>
                     </TabList>
                     <TabPanel value={0}>
                         <div>
@@ -83,7 +88,9 @@ class App extends Component<{}, {}> {
                         <AttributeMenu />
                         <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                     </TabPanel>
-                    
+                    <TabPanel value={2}>
+                        <PkSignalTest />
+                    </TabPanel>
                 </Tabs>
             </CS.Provider>
             </CssVarsProvider>
