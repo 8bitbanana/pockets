@@ -6,20 +6,19 @@ import 'preact/debug'
 import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer } from 'lib/attribute';
 import { Charsheet } from 'lib/charsheet';
-import { CharsheetAction, CharsheetReducer } from 'lib/charsheet_actions';
 
 import AttributeMenu from './AttributeMenu';
 import EvalContainer from "./eval/EvalContainer";
-import { useMemo, useReducer } from 'preact/hooks';
 
-import { Checkbox, Tab, TabList, TabPanel, Tabs } from '@mui/joy';
+import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
 import { CssVarsProvider } from '@mui/joy/styles';
 import PkTextField from './PkTextField';
 import { pocketsTheme } from './themes';
 import PkEditModeToggle from './PkEditModeToggle';
 import { TextFieldContainer } from 'lib/TextFieldContainer';
-import PkSignalTest from './signal_testing/PkSignalTest';
-import { DeepSignal, deepSignal } from 'deepsignal';
+import PkSignalTest from './testing/PkSignalTest';
+import PkMapListTest from './testing/PkMapListTest';
+import { CharsheetApp } from './charsheet_app';
 
 
 function createCharsheet(): Charsheet {
@@ -38,17 +37,17 @@ function createCharsheet(): Charsheet {
     }
 
     let text_fields = new TextFieldContainer;
-    text_fields.add("test", "Hello world!");
+    text_fields.add("test1", "Hello world!");
+    text_fields.add("test2", "Hello world!");
 
     return new Charsheet(attributes, text_fields);
 }
 
-export type CharsheetUpdater = {
-    sheet: Charsheet,
-    dispatch: (action: CharsheetAction) => void
+export type CharsheetContext = {
+    sheet: CharsheetApp,
 }
 
-export let CS: Context<CharsheetUpdater> = createContext({} as CharsheetUpdater);
+export let CS: Context<CharsheetContext> = createContext({} as CharsheetContext);
 
 class App extends Component<{}, {}> {
 
@@ -58,38 +57,45 @@ class App extends Component<{}, {}> {
 
     render() {
 
-        const [sheet, dispatch] = useReducer(CharsheetReducer, createCharsheet());
+        //const [sheet, dispatch] = useReducer(CharsheetReducer, createCharsheet());
 
-        const updater: CharsheetUpdater = useMemo(() => {
-            return {
-                sheet: sheet,
-                dispatch: dispatch
-            }
-        }, [sheet]);
+        // const updater: CharsheetUpdater = useMemo(() => {
+        //     return {
+        //         sheet: sheet,
+        //         dispatch: dispatch
+        //     }
+        // }, [sheet]);
     
+        const sheet = new CharsheetApp(createCharsheet());
+
         return (
             <CssVarsProvider theme={pocketsTheme}>
-            <CS.Provider value={updater}>
-                <Tabs defaultValue={2}>
+            <CS.Provider value={{sheet}}>
+                <Tabs defaultValue={1}>
                     <TabList>
                         <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
                         <Tab variant='plain' color="neutral">Signal Test</Tab>
+                        <Tab variant='plain' color="neutral">Map list Test</Tab>
                     </TabList>
                     <TabPanel value={0}>
                         <div>
                         <PkEditModeToggle />
                         </div>
                         <div>
-                        <PkTextField textfieldkey="test"></PkTextField>
+                        <PkTextField my_key="test1"></PkTextField>
+                        <PkTextField my_key="test2"></PkTextField>
                         </div>
                     </TabPanel>
                     <TabPanel value={1}>
-                        <AttributeMenu />
+                        <AttributeMenu attributes={sheet.attributes} />
                         <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                     </TabPanel>
                     <TabPanel value={2}>
                         <PkSignalTest />
+                    </TabPanel>
+                    <TabPanel value={3}>
+                        <PkMapListTest />
                     </TabPanel>
                 </Tabs>
             </CS.Provider>

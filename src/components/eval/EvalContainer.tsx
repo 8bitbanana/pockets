@@ -4,9 +4,11 @@ import { MyResult } from "lib/errors";
 import { Component } from "preact";
 import { EvalSuccess, EvalSuccessTree } from "./EvalSuccess";
 import { EvalError } from "./EvalError";
+import SignalWrapper from "components/utils/SignalWrapper";
+import { Maybe } from "true-myth";
 
 type EvalContainerProps ={
-    eval_result?: MyResult<EvaluatedExpression>
+    eval_result: SignalWrapper<Maybe<MyResult<EvaluatedExpression>>>
     show_tree: boolean
 };
 
@@ -17,16 +19,19 @@ export class EvalContainer extends Component<EvalContainerProps,{}> {
     }
 
     render() {
-        if (this.props.eval_result !== undefined) {
 
-            if (this.props.eval_result.isOk) {
+        const eval_result = this.props.eval_result.get_inner();
+
+        if (eval_result.isJust) {
+
+            if (eval_result.value.isOk) {
                 if (this.props.show_tree) {
-                    return <EvalSuccessTree eval_result={this.props.eval_result.value} />;   
+                    return <EvalSuccessTree eval_result={eval_result.value.value} />;   
                 } else {
-                    return <EvalSuccess eval_result={this.props.eval_result.value} />;
+                    return <EvalSuccess eval_result={eval_result.value.value} />;
                 }
             } else {
-                return <EvalError eval_error={this.props.eval_result.error} />;
+                return <EvalError eval_error={eval_result.value.error} />;
             }
             
         } else {

@@ -1,9 +1,15 @@
 
 
 export class ContainerBase<TKey, TValue> {
-    data: Map<TKey, TValue> = new Map();
+    protected data: Map<TKey, TValue> = new Map();
+    protected order: TKey[] = [];
 
     add(key: TKey, value: TValue) {
+
+        if (!this.has(key)) {
+            this.order.push(key);
+        }
+
         this.data.set(key, value);
     }
 
@@ -26,8 +32,21 @@ export class ContainerBase<TKey, TValue> {
         return this.data.has(key);
     }
 
-    delete(key: TKey): boolean {
-        return this.data.delete(key);
+    delete(key_to_delete: TKey): boolean {
+
+        if (!this.has(key_to_delete)) {
+            return false;
+        }
+
+        console.log(`Deleting ${key_to_delete}`);
+
+        this.order = this.order.filter((key) => {return key !== key_to_delete});
+        this.data.delete(key_to_delete);
+
+        console.log(this.order);
+        console.log(this.data);
+
+        return true;
     }
 
     rename(old_key: TKey, new_key: TKey): boolean {
@@ -40,6 +59,20 @@ export class ContainerBase<TKey, TValue> {
         }
         this.data.delete(old_key);
         this.data.set(new_key, attr);
+
+        const old_key_index = this.order.indexOf(old_key);
+        if (old_key_index !== undefined) {
+            this.order[old_key_index] = new_key;
+        }
+
         return true;
+    }
+
+    get(key: TKey): TValue | undefined {
+        return this.data.get(key);
+    }
+
+    forEachKey(func: (key: TKey) => void): void {
+        this.order.forEach(func);
     }
 }

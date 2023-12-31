@@ -5,14 +5,16 @@ import { AttrContainer, Attribute } from "lib/attribute";
 import { Component } from "preact";
 import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
-import { useContext } from "preact/hooks";
+import { useContext, useMemo, useState } from "preact/hooks";
 
 import { CS } from "./app";
-import * as Actions from "lib/charsheet_actions";
+import SignalWrapper from "./utils/SignalWrapper";
+import { useSignal } from "@preact/signals";
+import { just } from "true-myth/dist/es/maybe";
 
 type AttributeMenuElementProps = {
-    name: string,
-    expr: string
+    my_key: string,
+    attributes: SignalWrapper<AttrContainer>
 };
 
 class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
@@ -23,45 +25,60 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
 
     render() {
 
-        const { sheet, dispatch } = useContext(CS);
+        const { sheet } = useContext(CS);
 
-        // const expr_string = sheet.attributes.get_expression_string(this.props.attrkey);
-        // if (expr_string.isErr) {
-        //     throw "Invalid attrkey";
-        // }
+        /*
+        * Could use state to update our key without rerendering every other entry
+        * but this causes issues with deletion since the state isn't reset.
+        */
+        //const [ key, setKey ] = useState(this.props.my_key);
+        const key = this.props.my_key;
+
+        const expr = this.props.attributes.get_inner().get_expression_string(key).unwrapOr("Error!");
 
         return <div>
-            <input type="text" value={this.props.name} onChange={(event)=>{
-                dispatch(new Actions.CA_RenameAttribute(this.props.name, event.currentTarget.value))
+            <input type="text" value={key} onChange={(event)=>{
+                this.props.attributes.mutate((inner) => {
+                    inner.rename(key, event.currentTarget.value);
+                }, true); // <- rerender parent since we aren't using state
+
+                //setKey(event.currentTarget.value);
             }}/>
-            <input type="text" value={this.props.expr} onChange={(event)=>{
-                dispatch(new Actions.CA_ModifyAttribute(this.props.name, event.currentTarget.value))
+            <input type="text" value={expr} onChange={(event)=>{
+                if (event.currentTarget.value !== expr) {
+
+                    this.props.attributes.mutate((inner) => {
+                        inner.modify(key, event.currentTarget.value);
+                    }, false);
+
+                    this.forceUpdate();
+                }
             }}/>
             <button onClick={() => {
-                dispatch(new Actions.CA_Evaluate(this.props.name))
+                
+                sheet.last_ran_expr.set_inner(just(sheet.attributes.get_inner().evaluate(key)));
+
             }}>Eval</button>
             <button onClick={() => {
-                dispatch(new Actions.CA_DeleteAttribute(this.props.name));
+                this.props.attributes.mutate((inner) => {
+                    inner.delete(key);
+                });
             }}>Delete</button>
         </div>;
     }
 }
 
 type AttributeMenuProps = {
-    // attribute_container: AttrContainer;
+    attributes: SignalWrapper<AttrContainer>;
 }
 
 class AttributeMenu extends Component<AttributeMenuProps> {
 
     render() {
-        const { sheet, dispatch } = useContext(CS);
-
-        const names = sheet.attributes.data;
-
         const elements: JSXInternal.Element[] = [];
-        sheet.attributes.data.forEach((value, key) => {
+        this.props.attributes.get_inner().forEachKey((key) => {
             elements.push(
-                <AttributeMenuElement name={key} expr={value} />
+                <AttributeMenuElement my_key={key} attributes={this.props.attributes} />
             )
         });
 
@@ -69,8 +86,18 @@ class AttributeMenu extends Component<AttributeMenuProps> {
             <div>
                 {elements}
                 <button onClick={() => {
-                    dispatch(new Actions.CA_AddBlankAttribute);
-                }} >Add</button>
+                    this.props.attributes.mutate((inner) => {
+                        let count = 0
+                        while (count++ < 1000) {
+                            const name = "new" + count;
+                            if (!inner.has(name)) {
+                                inner.add(name, "0");
+                                return;
+                            }
+                        }
+                    })
+
+                }}>Add</button>
             </div>
         );
     }
