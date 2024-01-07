@@ -1,0 +1,61 @@
+
+
+.pktextfield {
+    display: inline-block;
+    position: relative;
+}
+
+.pktextfield input {
+    width: 100% !important;
+    background-color: rgba(0, 225, 255, 0.3);
+
+    position: absolute;
+    left: 0;
+
+    height: auto;
+    display: inline-block;
+
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+    
+    padding: 1 10 1 5;
+
+    font-size: var(--joy-fontSize-md, 1rem);
+    font-family: var(--joy-fontFamily-body);
+    line-height: var(--joy-lineHeight-md, 1.5);
+
+    font-weight: bold;
+}
+
+.pktextfield button {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    background-image: none;
+    border: 0;
+    box-shadow: none;
+    text-align: left;
+    text-shadow: initial;
+}
+
+.pktextfield button:hover {
+    color: var(--joy-palette-primary-500)
+}
+
+.pktextfield span {
+    display: inline-block;
+
+    padding: 1 1 1 5;
+
+    font-size: var(--joy-fontSize-md, 1rem);
+    font-family: var(--joy-fontFamily-body);
+    line-height: var(--joy-lineHeight-md, 1.5);
+
+    font-weight: bold;
+}
+
+.invisible {
+    visibility: hidden;
+}

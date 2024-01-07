@@ -5,6 +5,9 @@ import { CS } from "./app";
 import SignalWrapper from "./utils/SignalWrapper";
 import { TextFieldContainer } from "lib/TextFieldContainer";
 
+import "./pk.module.css"
+import * as css from "./pk.module.css";
+
 type PkTextFieldProps = {
     my_key: string
 }
@@ -23,16 +26,32 @@ export default class PkTextField extends Component<PkTextFieldProps> {
         }
 
         if (sheet.edit_mode.value) {
-            return <Input size="sm" variant="soft" value={field_value}
-                onChange={(event: any) => {
+
+            return <div><span className={css.pktextfield}>
+                <input value={field_value} type="text" onChange={(event: any) => {
                     sheet.text_fields.mutate((inner) => {
                         inner.modify(this.props.my_key, event.currentTarget.value);
                     }, false);
 
                     this.forceUpdate();
-                }}/>;
+                }}/>
+                <span key="pklabel" className={css.invisible}>{field_value.replaceAll(' ', '\u00a0')}</span>
+            </span></div>;
+
+            // return <Input size="sm" variant="soft" value={field_value}
+            //     onChange={(event: any) => {
+            //         sheet.text_fields.mutate((inner) => {
+            //             inner.modify(this.props.my_key, event.currentTarget.value);
+            //         }, false);
+
+            //         this.forceUpdate();
+            //     }}/>;
         } else {
-            return <div><Button size="sm" variant="plain">{field_value}</Button></div>;
+            return <div><span className={css.pktextfield}>
+                <button onClick={() => alert(field_value)}>
+                    <span>{field_value.replaceAll(' ', '\u00a0')}</span>
+                </button>
+            </span></div>;
         }
     }
 }

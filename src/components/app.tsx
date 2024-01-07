@@ -71,7 +71,7 @@ class App extends Component<{}, {}> {
         return (
             <CssVarsProvider theme={pocketsTheme}>
             <CS.Provider value={{sheet}}>
-                <Tabs defaultValue={1}>
+                <Tabs defaultValue={0}>
                     <TabList>
                         <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
