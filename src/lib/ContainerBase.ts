@@ -18,12 +18,6 @@ export class ContainerBase<TKey, TValue> {
         if (old_value === undefined) {
             return false;
         }
-        /* Modifying to the same thing is probably fine
-           It will cause a refresh since this returns true, but
-           we probably want that anyway */
-        // if (old_value === new_value) {
-        //     return false;
-        // }
         this.data.set(key, new_value);
         return true;
     }
@@ -38,13 +32,8 @@ export class ContainerBase<TKey, TValue> {
             return false;
         }
 
-        console.log(`Deleting ${key_to_delete}`);
-
         this.order = this.order.filter((key) => {return key !== key_to_delete});
         this.data.delete(key_to_delete);
-
-        console.log(this.order);
-        console.log(this.data);
 
         return true;
     }

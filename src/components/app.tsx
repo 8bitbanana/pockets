@@ -33,7 +33,7 @@ function createCharsheet(): Charsheet {
     ];
 
     for (const kvp of unparsed) {
-        attributes.add(kvp[0], kvp[1]);
+        attributes.add_attribute(kvp[0], kvp[1]);
     }
 
     let text_fields = new TextFieldContainer;

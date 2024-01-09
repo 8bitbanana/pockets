@@ -34,12 +34,12 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
         //const [ key, setKey ] = useState(this.props.my_key);
         const key = this.props.my_key;
 
-        const expr = this.props.attributes.get_inner().get_expression_string(key).unwrapOr("Error!");
+        const expr = this.props.attributes.get_inner().get_attribute(key).unwrapOr("Error!");
 
         return <div>
             <input type="text" value={key} onChange={(event)=>{
                 this.props.attributes.mutate((inner) => {
-                    inner.rename(key, event.currentTarget.value);
+                    inner.rename_attribute(key, event.currentTarget.value);
                 }, true); // <- rerender parent since we aren't using state
 
                 //setKey(event.currentTarget.value);
@@ -48,7 +48,7 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
                 if (event.currentTarget.value !== expr) {
 
                     this.props.attributes.mutate((inner) => {
-                        inner.modify(key, event.currentTarget.value);
+                        inner.modify_attribute(key, event.currentTarget.value);
                     }, false);
 
                     this.forceUpdate();
@@ -61,7 +61,7 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
             }}>Eval</button>
             <button onClick={() => {
                 this.props.attributes.mutate((inner) => {
-                    inner.delete(key);
+                    inner.remove_attribute(key);
                 });
             }}>Delete</button>
         </div>;
@@ -90,8 +90,8 @@ class AttributeMenu extends Component<AttributeMenuProps> {
                         let count = 0
                         while (count++ < 1000) {
                             const name = "new" + count;
-                            if (!inner.has(name)) {
-                                inner.add(name, "0");
+                            if (!inner.has_attribute(name)) {
+                                inner.add_attribute(name, "0");
                                 return;
                             }
                         }

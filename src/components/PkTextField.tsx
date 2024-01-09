@@ -37,15 +37,6 @@ export default class PkTextField extends Component<PkTextFieldProps> {
                 }}/>
                 <span key="pklabel" className={css.invisible}>{field_value.replaceAll(' ', '\u00a0')}</span>
             </span></div>;
-
-            // return <Input size="sm" variant="soft" value={field_value}
-            //     onChange={(event: any) => {
-            //         sheet.text_fields.mutate((inner) => {
-            //             inner.modify(this.props.my_key, event.currentTarget.value);
-            //         }, false);
-
-            //         this.forceUpdate();
-            //     }}/>;
         } else {
             return <div><span className={css.pktextfield}>
                 <button onClick={() => alert(field_value)}>

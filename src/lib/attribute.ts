@@ -8,18 +8,44 @@ import { ContainerBase } from "./ContainerBase";
 type AttrKey = string;
 export type Attribute = UnparsedExpression;
 
-export class AttrContainer extends ContainerBase<AttrKey, Attribute> {
+export class AttrContainer {
 
-    get_expression_string(attrkey: AttrKey): MyResult<string> {
-        return this.get_attribute(attrkey);
+    private attributes: ContainerBase<AttrKey, Attribute>
+
+    constructor() {
+        this.attributes = new ContainerBase<AttrKey, Attribute>;
     }
 
-    private get_attribute(attrkey: AttrKey): MyResult<Attribute> {
-        const attr = this.data.get(attrkey);
+    public get_attribute(attrkey: AttrKey): MyResult<Attribute> {
+        const attr = this.attributes.get(attrkey);
         if (attr === undefined) {
             return err(new Error.UnknownVariable(attrkey));
         }
         return ok(attr);
+    }
+
+    public has_attribute(key: AttrKey): boolean {
+        return this.attributes.has(key);
+    }
+
+    public add_attribute(key: AttrKey, value: Attribute) {
+        this.attributes.add(key, value);
+    }
+
+    public rename_attribute(old_key: AttrKey, new_key: AttrKey) {
+        this.attributes.rename(old_key, new_key);
+    }
+
+    public modify_attribute(key: AttrKey, new_value: Attribute) {
+        this.attributes.modify(key, new_value);
+    }
+
+    public remove_attribute(key: AttrKey) {
+        this.attributes.delete(key);
+    }
+
+    public forEachKey(func: (key: AttrKey) => void) {
+        this.attributes.forEachKey(func);
     }
 
     private do_evaluation(
