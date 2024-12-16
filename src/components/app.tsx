@@ -4,7 +4,7 @@ obj = window;
 import 'preact/debug'
 
 import { render, createContext, Context, Component } from 'preact';
-import { AttrContainer } from 'lib/attribute';
+import { AttrContainer, UnparsedAttrContainer } from 'lib/attribute';
 import { Charsheet } from 'lib/charsheet';
 
 import AttributeMenu from './AttributeMenu';
@@ -22,7 +22,7 @@ import { CharsheetApp } from './charsheet_app';
 
 
 function createCharsheet(): Charsheet {
-    let attributes = new AttrContainer;
+    let attributes = new UnparsedAttrContainer;
     
     let unparsed = [
         ["attack_roll", "d20"],
@@ -32,15 +32,26 @@ function createCharsheet(): Charsheet {
         ["pb", "4"],
     ];
 
+    type Override = {
+        key: string
+        value: string
+    }
+
+    type Overrides = [string, Override[]][];
+
+    let overrides: Overrides = [
+        ["advantage", [{key: "attack_roll", value: "(2[input]kh1)"}]]
+    ]
+
     for (const kvp of unparsed) {
         attributes.add_attribute(kvp[0], kvp[1]);
     }
 
     let text_fields = new TextFieldContainer;
-    text_fields.add("test1", "Hello world!");
-    text_fields.add("test2", "Hello world!");
+    text_fields.set("test1", "Hello world!");
+    text_fields.set("test2", "Hello world!");
 
-    return new Charsheet(attributes, text_fields);
+    return new Charsheet(new AttrContainer(attributes), text_fields);
 }
 
 export type CharsheetContext = {

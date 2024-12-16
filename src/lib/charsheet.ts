@@ -1,6 +1,6 @@
 
 import { TextFieldContainer } from "./TextFieldContainer";
-import {AttrContainer} from "./attribute";
+import {AttrContainer, UnparsedAttrContainer} from "./attribute";
 import { EvaluatedExpression } from "./diceroll/mod";
 import { MyResult } from "./errors";
 

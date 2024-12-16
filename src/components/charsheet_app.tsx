@@ -1,4 +1,4 @@
-import { AttrContainer } from "lib/attribute";
+import { AttrContainer, UnparsedAttrContainer } from "lib/attribute";
 import { Charsheet } from "lib/charsheet";
 import { EvaluatedExpression } from "lib/diceroll/mod";
 import { MyResult } from "lib/errors";

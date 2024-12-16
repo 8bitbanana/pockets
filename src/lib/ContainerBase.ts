@@ -4,13 +4,20 @@ export class ContainerBase<TKey, TValue> {
     protected data: Map<TKey, TValue> = new Map();
     protected order: TKey[] = [];
 
-    add(key: TKey, value: TValue) {
+    set(key: TKey, value: TValue) {
 
         if (!this.has(key)) {
             this.order.push(key);
         }
 
         this.data.set(key, value);
+    }
+
+    add(key: TKey, value: TValue) {
+        if (!this.has(key)) {
+            this.order.push(key);
+            this.data.set(key, value);
+        }
     }
 
     modify(key: TKey, new_value: TValue): boolean {

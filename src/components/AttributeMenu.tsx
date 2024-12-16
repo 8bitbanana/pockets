@@ -1,7 +1,7 @@
 
 import * as style from "./AttributeMenu.module.css"
 
-import { AttrContainer, Attribute } from "lib/attribute";
+import { AttrContainer } from "lib/attribute";
 import { Component } from "preact";
 import { ParsedExpression } from "lib/diceroll/mod";
 import { JSXInternal } from "preact/src/jsx";
@@ -34,12 +34,14 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
         //const [ key, setKey ] = useState(this.props.my_key);
         const key = this.props.my_key;
 
-        const expr = this.props.attributes.get_inner().get_attribute(key).unwrapOr("Error!");
+        const unparsed = this.props.attributes.get_inner().get_unparsed(false);
+
+        const expr = unparsed.get_attribute(key).unwrapOr("Error!");
 
         return <div>
             <input type="text" value={key} onChange={(event)=>{
                 this.props.attributes.mutate((inner) => {
-                    inner.rename_attribute(key, event.currentTarget.value);
+                    inner.get_unparsed(true).rename_attribute(key, event.currentTarget.value);
                 }, true); // <- rerender parent since we aren't using state
 
                 //setKey(event.currentTarget.value);
@@ -48,7 +50,7 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
                 if (event.currentTarget.value !== expr) {
 
                     this.props.attributes.mutate((inner) => {
-                        inner.modify_attribute(key, event.currentTarget.value);
+                        inner.get_unparsed(true).modify_attribute(key, event.currentTarget.value);
                     }, false);
 
                     this.forceUpdate();
@@ -56,12 +58,12 @@ class AttributeMenuElement extends Component<AttributeMenuElementProps, {}> {
             }}/>
             <button onClick={() => {
                 
-                sheet.last_ran_expr.set_inner(just(sheet.attributes.get_inner().evaluate(key)));
+                sheet.last_ran_expr.set_inner(just(sheet.attributes.get_inner().get_parsed().evaluate(key)));
 
             }}>Eval</button>
             <button onClick={() => {
                 this.props.attributes.mutate((inner) => {
-                    inner.remove_attribute(key);
+                    inner.get_unparsed(true).remove_attribute(key);
                 });
             }}>Delete</button>
         </div>;
@@ -76,7 +78,8 @@ class AttributeMenu extends Component<AttributeMenuProps> {
 
     render() {
         const elements: JSXInternal.Element[] = [];
-        this.props.attributes.get_inner().forEachKey((key) => {
+
+        this.props.attributes.get_inner().get_unparsed(false).forEachKey((key) => {
             elements.push(
                 <AttributeMenuElement my_key={key} attributes={this.props.attributes} />
             )
@@ -87,11 +90,13 @@ class AttributeMenu extends Component<AttributeMenuProps> {
                 {elements}
                 <button onClick={() => {
                     this.props.attributes.mutate((inner) => {
+                        const unparsed = inner.get_unparsed(false);
                         let count = 0
                         while (count++ < 1000) {
                             const name = "new" + count;
-                            if (!inner.has_attribute(name)) {
-                                inner.add_attribute(name, "0");
+                            if (!unparsed.has_attribute(name)) {
+                                inner.dirty();
+                                unparsed.add_attribute(name, "0");
                                 return;
                             }
                         }

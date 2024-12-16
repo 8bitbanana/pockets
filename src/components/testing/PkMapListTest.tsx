@@ -7,9 +7,9 @@ import { useContext } from "preact/hooks";
 import { JSXInternal } from "preact/src/jsx";
 
 let map_base = new ContainerBase<string, string>();
-map_base.add("test1", "hi");
-map_base.add("test2", "hii");
-map_base.add("test3", "hiii");
+map_base.set("test1", "hi");
+map_base.set("test2", "hii");
+map_base.set("test3", "hiii");
 
 type MapSignal = SignalWrapper<ContainerBase<string, string>>;
 

@@ -4,11 +4,37 @@ import { MyResult, add_context } from "./errors";
 import * as Error from './errors';
 import { ok, err } from "true-myth/dist/es/result";
 import { ContainerBase } from "./ContainerBase";
+import { AttributeLiteral } from "./diceroll/parser/expression";
 
 type AttrKey = string;
-export type Attribute = UnparsedExpression;
+type Attribute = UnparsedExpression;
 
-export class AttrContainer {
+type LinkedAttributesDependencies = ContainerBase<AttrKey, MyResult<ParsedExpression>>;
+
+export class ParsedAttributeContainer {
+
+    private attributes: LinkedAttributesDependencies
+
+    constructor(attributes: LinkedAttributesDependencies) {
+        this.attributes = attributes;
+    }
+
+    public evaluate(attrkey: AttrKey): MyResult<EvaluatedExpression> {
+        let attr = this.attributes.get(attrkey);
+        if (attr == undefined)
+        {
+            return err(new Error.UnknownVariable(attrkey));
+        }
+        if (attr.isErr)
+        {
+            return err(attr.error);
+        }
+
+        return Evaluate(attr.value, this.attributes);
+    }
+}
+
+export class UnparsedAttrContainer {
 
     private attributes: ContainerBase<AttrKey, Attribute>
 
@@ -29,7 +55,7 @@ export class AttrContainer {
     }
 
     public add_attribute(key: AttrKey, value: Attribute) {
-        this.attributes.add(key, value);
+        this.attributes.set(key, value);
     }
 
     public rename_attribute(old_key: AttrKey, new_key: AttrKey) {
@@ -48,26 +74,23 @@ export class AttrContainer {
         this.attributes.forEachKey(func);
     }
 
-    private do_evaluation(
+    private do_parse(
         attrkey: AttrKey,
+        ResolvedVariables: LinkedAttributesDependencies,
         VisitedAttrs: Set<AttrKey>,
-        ResolvedVariables: Map<AttrKey, EvaluatedExpression>,
         RecurseCount: number
-        ): MyResult<EvaluatedExpression>
+        ): MyResult<ParsedExpression>
         {
-            if (RecurseCount > 1000)
-            {
+            if (RecurseCount > 1000) {
                 return err(new Error.Timeout);
             }
 
             const resolved_var = ResolvedVariables.get(attrkey);
-            if (resolved_var !== undefined)
-            {
-                return ok(resolved_var);
+            if (resolved_var !== undefined) {
+                return resolved_var;
             }
 
-            if (VisitedAttrs.has(attrkey))
-            {
+            if (VisitedAttrs.has(attrkey)) {
                 return err(new Error.AttributeCycle(attrkey));
             }
 
@@ -87,38 +110,51 @@ export class AttrContainer {
             const dependencies = parsed.unresolved_variables;
             for (const dependency of dependencies) {
                 const result = add_context(
-                    this.do_evaluation(dependency, VisitedAttrs, ResolvedVariables, RecurseCount + 1),
-                    `Evaluating dependency \"${dependency}\"`);
-                if (result.isErr)
-                {
-                    console.log("a");
-                    return result;
-                }
-                ResolvedVariables.set(dependency, result.value);
+                    this.do_parse(dependency, ResolvedVariables, VisitedAttrs, RecurseCount + 1),
+                    `Parsing dependency \"${dependency}\"`);
+                ResolvedVariables.add(dependency, result);
             }
 
             VisitedAttrs.delete(attrkey);
 
-            const evaluation = Evaluate(parsed, ResolvedVariables);
-
-            if (evaluation.isErr) {
-
-                console.log("Evaluating %s - Error!", attrkey);
-                console.log(evaluation.error);
-
-                return evaluation;
-            }
-
-            console.log("Evaluating %s - %d!", attrkey, evaluation.value.total);
-            console.log(evaluation.value);
-
-            return evaluation;
+            return ok(parsed);
         }
 
-    evaluate(attrToEvaluate: AttrKey): MyResult<EvaluatedExpression> {
+    parse_all(): ParsedAttributeContainer {
+        let dependencies = new ContainerBase<AttrKey, MyResult<ParsedExpression>>();
 
-        return add_context(this.do_evaluation(
-            attrToEvaluate, new Set<string>, new Map<string, EvaluatedExpression>, 0
-        ), `Evaluating root attribute \"${attrToEvaluate}\"`);
+        this.forEachKey((attrToLink) => {
+            const result = this.do_parse(attrToLink, dependencies, new Set<AttrKey>, 0);
+            dependencies.add(attrToLink, result);
+        });
+
+        return new ParsedAttributeContainer(dependencies);
+    }
+}
+
+export class AttrContainer {
+    private unparsed: UnparsedAttrContainer;
+    private parsed: ParsedAttributeContainer | null;
+
+    constructor(unparsed: UnparsedAttrContainer) {
+        this.unparsed = unparsed;
+        this.parsed = null;
+    }
+
+    dirty() {
+        this.parsed = null;
+    }
+
+    get_unparsed(modify: boolean): UnparsedAttrContainer {
+        if (modify) { this.dirty() }
+        return this.unparsed;
+    }
+
+    get_parsed(): ParsedAttributeContainer {
+        if (this.parsed === null)
+        {
+            this.parsed = this.unparsed.parse_all();
+        }
+        return this.parsed;
     }
 }

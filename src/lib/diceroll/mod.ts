@@ -2,6 +2,7 @@ import { MyResult } from "lib/errors";
 
 import { ParsedExpression } from "./parser/mod";
 import { Diceroll, DicerollSet } from "lib/diceroll";
+import { ContainerBase } from "lib/ContainerBase";
 
 abstract class EvaluatedLiteral {
 
@@ -124,13 +125,13 @@ export class EvaluatedExpression {
 }
 
 export type EvaluationContext = {
-    resolved_variables: Map<string, EvaluatedExpression>;
+    attributes: ContainerBase<string, MyResult<ParsedExpression>>;
 };
 
 export { Parse, UnparsedExpression, ParsedExpression } from "./parser/mod";
 
-export function Evaluate(expr: ParsedExpression, resolved_variables: Map<string, EvaluatedExpression>): MyResult<EvaluatedExpression> {
-    const context: EvaluationContext = { resolved_variables: resolved_variables };
+export function Evaluate(expr: ParsedExpression, attributes: ContainerBase<string, MyResult<ParsedExpression>>): MyResult<EvaluatedExpression> {
+    const context: EvaluationContext = { attributes };
 
     return expr.parsed_expression.evaluate(context);
 }

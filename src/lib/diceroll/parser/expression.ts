@@ -4,7 +4,7 @@ import { ok, err } from 'true-myth/dist/es/result';
 
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
-import { EvaluatedExpression, EvaluationContext } from '../mod'; 
+import { EvaluatedAttribute, EvaluatedExpression, EvaluationContext } from '../mod'; 
 
 export type ParseContext = {
     unresolved_variables: Set<string>;
@@ -30,21 +30,35 @@ export class NumberLiteral extends Literal {
     }
 }
 export class AttributeLiteral extends Literal {
-    name: string;
-    constructor(name: string) {
+    key: string;
+
+    constructor(key: string) {
         super();
-        this.name = name;
+        this.key = key;
     }
 
     evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
 
-        const attr = context.resolved_variables.get(this.name);
-
-        if (attr !== undefined) {
-            return ok(EvaluatedExpression.AttributeLiteral(attr.total, this.name, attr.annex));
-        } else {
-            return err(new Error.UnknownVariable(this.name));
+        const attr = context.attributes.get(this.key);
+        if (attr === undefined)
+        {
+            return err(new Error.UnknownVariable(this.key));
         }
+
+        if (attr.isErr)
+        {
+            return err(attr.error);
+        }
+
+        const result = Error.add_context(attr.value.parsed_expression.evaluate(context),
+            `Evaluating attribute \"${this.key}\"`);
+        
+        if (result.isErr)
+        {
+            return err(result.error)
+        }
+
+        return ok(EvaluatedExpression.AttributeLiteral(result.value.total, this.key, result.value.annex));
     }
 }
 export class InfixExpression extends Expr {

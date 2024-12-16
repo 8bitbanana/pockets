@@ -56,7 +56,7 @@ export class AttributeCycle extends Error {
 
 export class Timeout extends Error {
     Display(): string {
-        return `Timeout`
+        return `Timeout (infinite loop?)`
     }
 };
 
@@ -80,6 +80,19 @@ export class ParsingError extends Error {
         } else {
             return "Parsing error";
         }
+    }
+}
+
+export class UnreachableError extends Error {
+    description: string;
+
+    constructor(desc: string) {
+        super();
+        this.description = desc;
+    }
+
+    Display(): string {
+        return "Unreachable error, should not happen! " + this.description;
     }
 }
 
