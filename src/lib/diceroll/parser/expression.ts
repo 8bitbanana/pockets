@@ -50,8 +50,7 @@ export class AttributeLiteral extends Literal {
             return err(attr.error);
         }
 
-        const result = Error.add_context(attr.value.parsed_expression.evaluate(context),
-            `Evaluating attribute \"${this.key}\"`);
+        const result = attr.value.parsed_expression.evaluate(context);
         
         if (result.isErr)
         {

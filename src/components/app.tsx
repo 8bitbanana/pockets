@@ -67,15 +67,6 @@ class App extends Component<{}, {}> {
     }
 
     render() {
-
-        //const [sheet, dispatch] = useReducer(CharsheetReducer, createCharsheet());
-
-        // const updater: CharsheetUpdater = useMemo(() => {
-        //     return {
-        //         sheet: sheet,
-        //         dispatch: dispatch
-        //     }
-        // }, [sheet]);
     
         const sheet = new CharsheetApp(createCharsheet());
 

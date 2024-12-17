@@ -16,6 +16,7 @@ export abstract class Error {
     abstract Display(): string;
 
     PrintContext(): string {
+        console.log("PrintContext");
         let out = "";
         this.context_stack.forEach(element => {
             out += element.display + "\n";
@@ -25,6 +26,7 @@ export abstract class Error {
 
     PushContext(context: ErrorContext): void {
         this.context_stack.push(context);
+        console.log("PushContext");
     }
 }
 
@@ -71,6 +73,7 @@ export class ParsingError extends Error {
 
     constructor(desc: string | null = null) {
         super();
+        console.log("ParsingError construct");
         this.description = desc;
     }
 
