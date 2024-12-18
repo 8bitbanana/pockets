@@ -1,59 +1,79 @@
 
-
-.pktextfield {
-    display: inline-block;
-    position: relative;
+.flex {
+    display: flex;
+    flex-wrap: nowrap;
 }
 
-.pktextfield input {
-    width: 100% !important;
-    background-color: rgba(0, 225, 255, 0.3);
+.flexchild_grow {
+    flex-grow: 1;
+}
 
-    position: absolute;
-    left: 0;
+.character_name {
+    min-width: 160px;
+}
 
-    height: auto;
+.pktextfield {
+    margin: 0 5;
+}
+
+.pktextfield_label {
+    font-size: 9px;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pktextfield_container {
     display: inline-block;
 
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    margin-bottom: 0;
+
     
-    padding: 1 10 1 5;
+    padding: 0;
+    margin: 0;
+
+    width: 100%;
 
     font-size: var(--joy-fontSize-md, 1rem);
     font-family: var(--joy-fontFamily-body);
     line-height: var(--joy-lineHeight-md, 1.5);
-
-    font-weight: bold;
 }
 
-.pktextfield button {
+.pktextfield_container > * {
+    padding: 0;
+    margin: 0;
+
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    border-bottom: 1px solid #ccc !important;
+}
+
+.pktextfield_container > input {
+    background-color: rgba(0, 225, 255, 0.3);
+
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.pktextfield_container > button {
+    width: 100%;
     margin: 0;
     padding: 0;
+    border: 0;
+
     background-color: transparent;
     background-image: none;
-    border: 0;
     box-shadow: none;
     text-align: left;
     text-shadow: initial;
 }
 
-.pktextfield button:hover {
+.pktextfield_container > button:hover {
     color: var(--joy-palette-primary-500)
-}
-
-.pktextfield span {
-    display: inline-block;
-
-    padding: 1 1 1 5;
-
-    font-size: var(--joy-fontSize-md, 1rem);
-    font-family: var(--joy-fontFamily-body);
-    line-height: var(--joy-lineHeight-md, 1.5);
-
-    font-weight: bold;
 }
 
 .invisible {

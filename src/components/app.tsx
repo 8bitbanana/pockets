@@ -12,13 +12,14 @@ import EvalContainer from "./eval/EvalContainer";
 
 import { Tab, TabList, TabPanel, Tabs } from '@mui/joy';
 import { CssVarsProvider } from '@mui/joy/styles';
-import PkTextField from './PkTextField';
+import PkTextField from './text/PkTextField';
 import { pocketsTheme } from './themes';
 import PkEditModeToggle from './PkEditModeToggle';
 import { TextFieldContainer } from 'lib/TextFieldContainer';
 import PkSignalTest from './testing/PkSignalTest';
 import PkMapListTest from './testing/PkMapListTest';
 import { CharsheetApp } from './charsheet_app';
+import PkLayout from './text/PkLayout';
 
 
 function createCharsheet(): Charsheet {
@@ -48,8 +49,12 @@ function createCharsheet(): Charsheet {
     }
 
     let text_fields = new TextFieldContainer;
-    text_fields.set("test1", "Hello world!");
-    text_fields.set("test2", "Hello world!");
+    text_fields.set("name", "Mixolydian");
+    text_fields.set("class", "Sorcerer 11");
+    text_fields.set("race", "Reborn")
+    text_fields.set("background", "Hermit");
+    text_fields.set("size", "Medium");
+    text_fields.set("alignment", "Lawful Good");
 
     return new Charsheet(new AttrContainer(attributes), text_fields);
 }
@@ -81,13 +86,8 @@ class App extends Component<{}, {}> {
                         <Tab variant='plain' color="neutral">Map list Test</Tab>
                     </TabList>
                     <TabPanel value={0}>
-                        <div>
                         <PkEditModeToggle />
-                        </div>
-                        <div>
-                        <PkTextField my_key="test1"></PkTextField>
-                        <PkTextField my_key="test2"></PkTextField>
-                        </div>
+                        <PkLayout />
                     </TabPanel>
                     <TabPanel value={1}>
                         <AttributeMenu attributes={sheet.attributes} />
