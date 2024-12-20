@@ -67,23 +67,18 @@ export default class PkTextField extends Component<PkTextFieldProps> {
         const edit_mode = this.is_editable()
             && this.is_edit_mode_enabled(sheet);
 
-        let button = 
-            <button className={edit_mode ? css.invisible : ""}>
+        return <div className={this.get_field_classes()}>
+            <input className={edit_mode ? "" : css.invisible}
+                value={field_value} type="text" onInput={(event: any) => {
+                this.set_field_value(sheet, event.target.value);
+            }}/>
+            <button className={edit_mode ? css.invisible : ""}
+                onClick={ () => {
+                    console.log(field_value);
+                }}>
                 <span>{field_value.replaceAll(' ', '\u00a0')}</span>
-            </button>;
-
-        if (edit_mode) {
-            return <div className={this.get_field_classes()}>
-                <input value={field_value} type="text" onInput={(event: any) => {
-                    this.set_field_value(sheet, event.target.value);
-                }}/>
-                {button}
-            </div>;
-        } else {
-            return <div className={this.get_field_classes()}>
-                {button}
-            </div>;
-        }
+            </button>
+        </div>;
     }
 
     render() {
