@@ -1,5 +1,5 @@
 import { Component } from "preact";
-import PkTextField, { PkHeadingTextField } from "./PkTextField";
+import PkTextField, { PkHeadingTextField, PkAttributeEditorField, PkAttributeViewerField } from "./PkTextField";
 
 import * as css from "../pk.module.css";
 
@@ -22,9 +22,24 @@ export default class PkLayout extends Component {
                         <PkHeadingTextField className={css.flexchild_grow} my_key="alignment" label="Alignment" />
                     </div>
                 </div>
-                
+            </div>
 
+            <hr />
 
+            <div className={css.flex}>
+                <div id="col1-stats">
+                    <PkAttributeEditorField my_key="str" label="Strength" />
+                    <PkAttributeViewerField my_key="str_mod" />
+                </div>
+                <div id="col2-skills">
+
+                </div>
+                <div id="col3-attacks" className={css.flexchild_grow}>
+
+                </div>
+                <div id="col4-feats">
+
+                </div>
             </div>
         </div>
     }

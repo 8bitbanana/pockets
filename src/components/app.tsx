@@ -25,13 +25,23 @@ import PkLayout from './text/PkLayout';
 function createCharsheet(): Charsheet {
     let attributes = new UnparsedAttrContainer;
     
+    // let unparsed = [
+    //     ["attack_roll", "d20"],
+    //     ["str", "2"],
+    //     ["weapon_attack_roll", "[attack_roll]+[weapon_attack_modifier]"],
+    //     ["weapon_attack_modifier", "[str]+[pb]"],
+    //     ["pb", "4"],
+    // ];
+
+    // roll mod = 
+
     let unparsed = [
-        ["attack_roll", "d20"],
-        ["str", "2"],
-        ["weapon_attack_roll", "[attack_roll]+[weapon_attack_modifier]"],
-        ["weapon_attack_modifier", "[str]+[pb]"],
-        ["pb", "4"],
-    ];
+        ["roll", "d20"],
+        ["pb", "3"],
+        ["str", "15"],
+        ["str_mod", "([str]-10)//2"],
+        ["str_check", "[roll]+[str_mod]"]
+    ]
 
     type Override = {
         key: string
