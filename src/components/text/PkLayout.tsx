@@ -1,7 +1,9 @@
 import { Component } from "preact";
-import PkTextField, { PkHeadingTextField, PkAttributeEditorField, PkAttributeViewerField } from "./PkTextField";
+import PkTextField, { PkHeadingTextField } from "./PkTextField";
+import { PkAttributeEditorField, PkAttributeViewerField } from "./PkAttributeField";
 
 import * as css from "../pk.module.css";
+import PkStatsBoxField from "./PkStatsBoxField";
 
 export default class PkLayout extends Component {
     render() {
@@ -28,8 +30,12 @@ export default class PkLayout extends Component {
 
             <div className={css.flex}>
                 <div id="col1-stats">
-                    <PkAttributeEditorField my_key="str" label="Strength" />
-                    <PkAttributeViewerField my_key="str_mod" />
+                    <PkStatsBoxField base_key="str" mod_key="str_mod" label="Strength" />
+                    <PkStatsBoxField base_key="dex" mod_key="dex_mod" label="Dexterity" />
+                    <PkStatsBoxField base_key="con" mod_key="con_mod" label="Constitution" />
+                    <PkStatsBoxField base_key="int" mod_key="int_mod" label="Intelligence" />
+                    <PkStatsBoxField base_key="wis" mod_key="wis_mod" label="Wisdom" />
+                    <PkStatsBoxField base_key="cha" mod_key="cha_mod" label="Charisma" />
                 </div>
                 <div id="col2-skills">
 

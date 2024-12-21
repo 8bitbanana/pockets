@@ -10,6 +10,7 @@ type PkTextFieldProps = {
     my_key: string,
     label?: string,
     className?: string
+    numberinput?: boolean
 }
 
 export default class PkTextField extends Component<PkTextFieldProps> {
@@ -34,6 +35,10 @@ export default class PkTextField extends Component<PkTextFieldProps> {
 
     is_edit_mode_enabled(sheet: CharsheetApp): boolean {
         return sheet.edit_mode.value;
+    }
+
+    is_number_input(): boolean {
+        return this.props.numberinput === true;
     }
 
     is_editable(): boolean {
@@ -69,9 +74,12 @@ export default class PkTextField extends Component<PkTextFieldProps> {
 
         return <div className={this.get_field_classes()}>
             <input className={edit_mode ? "" : css.invisible}
-                value={field_value} type="text" onInput={(event: any) => {
-                this.set_field_value(sheet, event.target.value);
-            }}/>
+                value={field_value}
+                type={this.is_number_input() ? "number" : "text"}
+                onInput={(event: any) => {
+                    this.set_field_value(sheet, event.target.value);
+                }}
+            />
             <button className={edit_mode ? css.invisible : ""}
                 onClick={ () => {
                     console.log(field_value);
@@ -98,34 +106,3 @@ export class PkHeadingTextField extends PkTextField {
     }
 }
 
-export class PkAttributeEditorField extends PkTextField {
-
-    get_field_value(sheet: CharsheetApp): string | undefined {
-        return sheet.attributes.get_inner()
-            .get_unparsed(false).get_attribute(this.props.my_key)
-            .unwrapOr(undefined);
-    }
-
-    set_field_value(sheet: CharsheetApp, new_value: string): void {
-        sheet.attributes.mutate((inner) => {
-            inner.get_unparsed(true).modify_attribute(this.props.my_key, new_value);
-        });
-    }
-}
-
-export class PkAttributeViewerField extends PkTextField {
-
-    get_field_value(sheet: CharsheetApp): string | undefined {
-        return sheet.attributes.get_inner()
-            .get_parsed().evaluate(this.props.my_key)
-            .unwrapOr(undefined)?.total.toString();
-    }
-
-    is_editable(): boolean {
-        return false;
-    }
-
-    set_field_value(sheet: CharsheetApp, new_value: string): void {
-        
-    }
-}

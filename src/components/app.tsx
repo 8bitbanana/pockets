@@ -38,9 +38,25 @@ function createCharsheet(): Charsheet {
     let unparsed = [
         ["roll", "d20"],
         ["pb", "3"],
-        ["str", "15"],
+
+        ["str", "8"],
         ["str_mod", "([str]-10)//2"],
-        ["str_check", "[roll]+[str_mod]"]
+        ["str_check", "[roll]+[str_mod]"],
+        ["dex", "15"],
+        ["dex_mod", "([dex]-10)//2"],
+        ["dex_check", "[roll]+[dex_mod]"],
+        ["con", "18"],
+        ["con_mod", "([con]-10)//2"],
+        ["con_check", "[roll]+[con_mod]"],
+        ["int", "9"],
+        ["int_mod", "([int]-10)//2"],
+        ["int_check", "[roll]+[int_mod]"],
+        ["wis", "11"],
+        ["wis_mod", "([wis]-10)//2"],
+        ["wis_check", "[roll]+[wis_mod]"],
+        ["cha", "20"],
+        ["cha_mod", "([cha]-10)//2"],
+        ["cha_check", "[roll]+[cha_mod]"],
     ]
 
     type Override = {

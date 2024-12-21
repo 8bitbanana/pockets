@@ -12,6 +12,37 @@
     flex-grow: 3;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.pkstatsbox {
+    width: 75px;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    text-align: center;
+    overflow: hidden;
+    margin: 3;
+}
+
+.pkstatsbox_bignumber button, .pkstatsbox_bignumber input {
+    font-size: 28px;
+}
+
+.pkstatsbox .pktextfield {
+    margin: 2;
+}
+
+.pkstatsbox button, .pkstatsbox input {
+    text-align: center !important;
+}
+
 .character_name {
     min-width: 160px;
 }
@@ -39,6 +70,7 @@
 }
 
 .pktextfield_container > * {
+
     padding: 0;
     margin: 0;
 
@@ -46,6 +78,8 @@
     grid-row: 1;
 
     border-bottom: 1px solid #ccc !important;
+
+    width: 100%;
 }
 
 .pktextfield_container > input {
