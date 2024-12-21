@@ -16,7 +16,6 @@ export abstract class Error {
     abstract Display(): string;
 
     PrintContext(): string {
-        console.log("PrintContext");
         let out = "";
         this.context_stack.forEach(element => {
             out += element.display + "\n";
@@ -26,7 +25,6 @@ export abstract class Error {
 
     PushContext(context: ErrorContext): void {
         this.context_stack.push(context);
-        console.log("PushContext");
     }
 }
 
@@ -42,6 +40,19 @@ export class UnknownVariable extends Error {
         return `Unknown Variable \"${this.name}\"`
     }
 };
+
+export class FunctionInvalidIndex extends Error {
+    index: number;
+
+    constructor(index: number) {
+        super();
+        this.index = index;
+    }
+
+    Display(): string {
+        return `Function input at index ${this.index} not found`;
+    }
+}
 
 export class AttributeCycle extends Error {
     name: string;
@@ -73,7 +84,6 @@ export class ParsingError extends Error {
 
     constructor(desc: string | null = null) {
         super();
-        console.log("ParsingError construct");
         this.description = desc;
     }
 

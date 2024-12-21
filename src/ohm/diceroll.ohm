@@ -30,8 +30,14 @@ Diceroll {
         | "-" ExprPriority --NegPrefix
         | Literal
 
+    AttributeInner
+        = variable_ident "(" Expr ")" --Function
+        | variable_ident --Single
+        
     Literal
-    	= "[" variable_ident "]" --Variable
+        = "[input" digit "]" --FunctionInput
+        | "[input]" --FunctionInputSingle
+    	| "[" AttributeInner "]" --Attribute
         | number --number
 
     variable_ident

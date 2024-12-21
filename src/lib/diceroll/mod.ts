@@ -126,12 +126,13 @@ export class EvaluatedExpression {
 
 export type EvaluationContext = {
     attributes: ContainerBase<string, MyResult<ParsedExpression>>;
+    functioninputstack: EvaluatedExpression[][];
 };
 
 export { Parse, UnparsedExpression, ParsedExpression } from "./parser/mod";
 
 export function Evaluate(expr: ParsedExpression, attributes: ContainerBase<string, MyResult<ParsedExpression>>): MyResult<EvaluatedExpression> {
-    const context: EvaluationContext = { attributes };
+    const context: EvaluationContext = { attributes, functioninputstack: [] };
 
     return expr.parsed_expression.evaluate(context);
 }

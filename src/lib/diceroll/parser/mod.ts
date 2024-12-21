@@ -57,14 +57,28 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
     ExprPriority_NegPrefix(arg0, arg1) {
         return new expression.PrefixExpression(new operation.SubtractOperation, arg1.tree(this.args.context));
     },
+    AttributeInner_Function(arg0, arg1, arg2, arg3) {
+        this.args.context.unresolved_variables.add(arg0.sourceString);
+        let expr = arg2.tree(this.args.context);
+        return new expression.FunctionLiteral(arg0.sourceString, [expr]);
+    },
+    AttributeInner_Single(arg0) {
+        this.args.context.unresolved_variables.add(arg0.sourceString);
+        return new expression.FunctionLiteral(arg0.sourceString, []);
+    },
+    Literal_FunctionInput(arg0, arg1, arg2) {
+        let index = parseInt(arg1.sourceString);
+        return new expression.FunctionInputLiteral(index);
+    },
+    Literal_FunctionInputSingle(arg0) {
+        return new expression.FunctionInputLiteral(0);
+    },
+    Literal_Attribute(arg0, arg1, arg2) {
+        return arg1.tree(this.args.context);
+    },
     Literal_number(arg0) {
         return new expression.NumberLiteral(parseFloat(this.sourceString));
     },
-    Literal_Variable(arg0, arg1, arg2) {
-
-        this.args.context.unresolved_variables.add(arg1.sourceString);
-        return new expression.AttributeLiteral(arg1.sourceString);
-    }
 });
 
 export function Parse(expr: UnparsedExpression): MyResult<ParsedExpression> {

@@ -29,16 +29,18 @@ export class NumberLiteral extends Literal {
         return ok(EvaluatedExpression.FixedLiteral(this.value));
     }
 }
-export class AttributeLiteral extends Literal {
-    key: string;
 
-    constructor(key: string) {
+export class FunctionLiteral extends Literal {
+    key: string;
+    params: Expr[];
+
+    constructor(key: string, params: Expr[]) {
         super();
         this.key = key;
+        this.params = params;
     }
 
     evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
-
         const attr = context.attributes.get(this.key);
         if (attr === undefined)
         {
@@ -50,16 +52,59 @@ export class AttributeLiteral extends Literal {
             return err(attr.error);
         }
 
+        let functioninputs = [];
+        for (var param of this.params) {
+            const result = param.evaluate(context);
+            if (result.isErr) {
+                return result;
+            }
+            functioninputs.push(result.value);
+        }
+
+        if (functioninputs.length > 0)
+        {
+            context.functioninputstack.push(functioninputs);
+        }
+
         const result = attr.value.parsed_expression.evaluate(context);
         
+        if (functioninputs.length > 0)
+        {
+            context.functioninputstack.pop();
+        }
+
         if (result.isErr)
         {
-            return err(result.error)
+            return result;
         }
 
         return ok(EvaluatedExpression.AttributeLiteral(result.value.total, this.key, result.value.annex));
     }
 }
+
+export class FunctionInputLiteral extends Literal {
+    index: number;
+    constructor(index: number) {
+        super();
+        this.index = index;
+    }
+    evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
+        
+        const inputstack = context.functioninputstack;
+
+        if (inputstack.length == 0) {
+            return err(new Error.FunctionInvalidIndex(this.index));
+        }
+
+        const inputs = inputstack[context.functioninputstack.length - 1];
+        if (inputs.length - 1 < this.index) {
+            return err(new Error.FunctionInvalidIndex(this.index))
+        }
+
+        return ok(inputs[this.index]);
+    }
+}
+
 export class InfixExpression extends Expr {
     left: Expr;
     op: InfixOperation;

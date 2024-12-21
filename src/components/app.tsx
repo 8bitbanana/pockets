@@ -24,40 +24,31 @@ import PkLayout from './text/PkLayout';
 
 function createCharsheet(): Charsheet {
     let attributes = new UnparsedAttrContainer;
-    
-    // let unparsed = [
-    //     ["attack_roll", "d20"],
-    //     ["str", "2"],
-    //     ["weapon_attack_roll", "[attack_roll]+[weapon_attack_modifier]"],
-    //     ["weapon_attack_modifier", "[str]+[pb]"],
-    //     ["pb", "4"],
-    // ];
-
-    // roll mod = 
 
     let unparsed = [
         ["roll", "d20"],
         ["pb", "3"],
+        ["stat_mod", "([input]-10)//2"],
 
         ["str", "8"],
-        ["str_mod", "([str]-10)//2"],
+        ["str_mod", "[stat_mod([str])]"],
         ["str_check", "[roll]+[str_mod]"],
         ["dex", "15"],
-        ["dex_mod", "([dex]-10)//2"],
+        ["dex_mod", "[stat_mod([dex])]"],
         ["dex_check", "[roll]+[dex_mod]"],
         ["con", "18"],
-        ["con_mod", "([con]-10)//2"],
+        ["con_mod", "[stat_mod([con])]"],
         ["con_check", "[roll]+[con_mod]"],
         ["int", "9"],
-        ["int_mod", "([int]-10)//2"],
+        ["int_mod", "[stat_mod([int])]"],
         ["int_check", "[roll]+[int_mod]"],
         ["wis", "11"],
-        ["wis_mod", "([wis]-10)//2"],
+        ["wis_mod", "[stat_mod([wis])]"],
         ["wis_check", "[roll]+[wis_mod]"],
         ["cha", "20"],
-        ["cha_mod", "([cha]-10)//2"],
+        ["cha_mod", "[stat_mod([cha])]"],
         ["cha_check", "[roll]+[cha_mod]"],
-    ]
+    ];
 
     type Override = {
         key: string
@@ -65,6 +56,11 @@ function createCharsheet(): Charsheet {
     }
 
     type Overrides = [string, Override[]][];
+
+
+    // stat_mod: ([input]-10)//2
+    // str_mod: [stat_mod][str]
+    // str_mod: [stat_mod(str)]
 
     let overrides: Overrides = [
         ["advantage", [{key: "attack_roll", value: "(2[input]kh1)"}]]
@@ -104,7 +100,7 @@ class App extends Component<{}, {}> {
         return (
             <CssVarsProvider theme={pocketsTheme}>
             <CS.Provider value={{sheet}}>
-                <Tabs defaultValue={0}>
+                <Tabs defaultValue={1}>
                     <TabList>
                         <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>
@@ -116,8 +112,8 @@ class App extends Component<{}, {}> {
                         <PkLayout />
                     </TabPanel>
                     <TabPanel value={1}>
+                    <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                         <AttributeMenu attributes={sheet.attributes} />
-                        <EvalContainer eval_result={sheet.last_ran_expr} show_tree={false}/>
                     </TabPanel>
                     <TabPanel value={2}>
                         <PkSignalTest />
