@@ -20,9 +20,20 @@ export class PkAttributeEditorField extends PkTextField {
 export class PkAttributeViewerField extends PkTextField {
 
     get_field_value(sheet: CharsheetApp): string | undefined {
-        return sheet.attributes.get_inner()
-            .get_parsed().evaluate(this.props.my_key)
-            .unwrapOr(undefined)?.total.toString();
+        const result = sheet.attributes.get_inner()
+            .get_parsed().evaluate(this.props.my_key);
+
+        if (result.isErr)
+        {
+            return undefined;
+        }
+
+        const total = result.value.total;
+        if (total > 0) {
+            return '+' + total.toString();
+        } else {
+            return total.toString();
+        }
     }
 
     is_editable(): boolean {
