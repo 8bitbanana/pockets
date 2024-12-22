@@ -1,6 +1,7 @@
 
 import * as operation from './operation';
 import * as expression from './expression';
+import * as rollmod from './rollmods';
 import grammer, { DicerollSemantics } from "ohm/diceroll.ohm-bundle";
 
 import { MyResult } from "lib/errors";
@@ -23,6 +24,22 @@ export class ParsedExpression {
 }
 
 const diceroll_semantics: DicerollSemantics = grammer.createSemantics();
+
+diceroll_semantics.addOperation<rollmod.RollMod>('rollmods(context)', {
+    RollMod_KeepHighest(arg0, arg1) {
+        return new rollmod.FilterRollMod("keep", "higher", parseInt(arg1.sourceString));
+    },
+    RollMod_KeepLowest(arg0, arg1) {
+        return new rollmod.FilterRollMod("keep", "lower", parseInt(arg1.sourceString));
+    },
+    RollMod_DropHighest(arg0, arg1) {
+        return new rollmod.FilterRollMod("drop", "higher", parseInt(arg1.sourceString));
+    },
+    RollMod_DropLowest(arg0, arg1) {
+        return new rollmod.FilterRollMod("drop", "lower", parseInt(arg1.sourceString));
+    },
+});
+
 diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
     ExprSumInfix_Add(arg0, arg1, arg2) {
         return new expression.InfixExpression(arg0.tree(this.args.context), new operation.AddOperation, arg2.tree(this.args.context));
@@ -43,15 +60,24 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
         return new expression.InfixExpression(arg0.tree(this.args.context), new operation.PowerOfOperation, arg2.tree(this.args.context));
     },
     ExprRollInfix_Dice(arg0, arg1, arg2, arg3) {
-        // todo arg3 rollmods
-        return new expression.RollExpression(arg0.tree(this.args.context), arg2.tree(this.args.context));
+        const mods = arg3.asIteration().children.map(
+            c => {return c.rollmods(this.args.context)}
+        );
+
+        return new expression.RollExpression(
+            arg0.tree(this.args.context),
+            arg2.tree(this.args.context),
+            mods);
     },
     ExprPriority_Paren(arg0, arg1, arg2) {
         return arg1.tree(this.args.context);
     },
     ExprPriority_RollPrefix(arg0, arg1, arg2) {
-        // todo arg2 rollmods
-        return new expression.RollExpression(null, arg1.tree(this.args.context));
+        const mods = arg2.asIteration().children.map(
+            c => {return c.rollmods(this.args.context)}
+        );
+
+        return new expression.RollExpression(null, arg1.tree(this.args.context), mods);
     },
     ExprPriority_PosPrefix(arg0, arg1) {
         return new expression.PrefixExpression(new operation.AddOperation, arg1.tree(this.args.context));
@@ -60,9 +86,14 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
         return new expression.PrefixExpression(new operation.SubtractOperation, arg1.tree(this.args.context));
     },
     AttributeInner_Function(arg0, arg1, arg2, arg3) {
+
         this.args.context.unresolved_variables.add(arg0.sourceString);
-        let expr = arg2.tree(this.args.context);
-        return new expression.FunctionLiteral(arg0.sourceString, [expr]);
+
+        const funcargs = arg2.asIteration().children.map(
+            c => {return c.tree(this.args.context)}
+        );
+
+        return new expression.FunctionLiteral(arg0.sourceString, funcargs);
     },
     AttributeInner_Single(arg0) {
         this.args.context.unresolved_variables.add(arg0.sourceString);

@@ -5,6 +5,7 @@ import { ok, err } from 'true-myth/dist/es/result';
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
 import { EvaluatedAttribute, EvaluatedExpression, EvaluationContext } from '../mod'; 
+import { RollMod } from './rollmods';
 
 export type ParseContext = {
     unresolved_variables: Set<string>;
@@ -153,8 +154,9 @@ export class PrefixExpression extends Expr {
 export class RollExpression extends Expr {
     left: Expr;
     right: Expr;
+    mods: RollMod[];
 
-    constructor(left: Expr | null, right: Expr) {
+    constructor(left: Expr | null, right: Expr, mods: RollMod[]) {
         super();
         
         if (left !== null) {
@@ -164,6 +166,7 @@ export class RollExpression extends Expr {
         }
 
         this.right = right;
+        this.mods = mods;
     }
     
     evaluate(context: EvaluationContext): MyResult<EvaluatedExpression> {
@@ -174,6 +177,9 @@ export class RollExpression extends Expr {
 
         const result = RollOperation(leftEval.value.total, rightEval.value.total);
         return result.map((diceroll) => {
+            for (const mod of this.mods) {
+                mod.ApplyRollMod(diceroll);
+            }
             return EvaluatedExpression.RollLiteral(diceroll);
         });
     }

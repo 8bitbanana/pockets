@@ -25,7 +25,6 @@ Diceroll {
         = caseInsensitive<"n"> --None
         | ComparisonOperator NonemptyListOf<digit+,","> --Comparison
         | NonemptyListOf<digit+,","> --SingleNumber
-        // todo number lists on either comparison
 
     RollMod
         = DropLowestToken digit+ --DropLowest
@@ -69,7 +68,7 @@ Diceroll {
         | Literal
 
     AttributeInner
-        = variable_ident "(" Expr ")" --Function
+        = variable_ident "(" ListOf<Expr,","> ")" --Function
         | variable_ident --Single
         // todo multiple function inputs
         

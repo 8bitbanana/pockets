@@ -1,7 +1,7 @@
 import { MyResult } from "lib/errors";
 
 import { ParsedExpression } from "./parser/mod";
-import { Diceroll, DicerollSet } from "lib/diceroll";
+import { Diceroll, DicerollResult, DicerollResultSet, DicerollSet } from "lib/diceroll";
 import { ContainerBase } from "lib/ContainerBase";
 
 abstract class EvaluatedLiteral {
@@ -42,22 +42,22 @@ export class EvaluatedFixed extends EvaluatedLiteral {
 
 
 export class EvaluatedDiceroll extends EvaluatedLiteral {
-    spec: Diceroll;
+    result: DicerollResult;
 
-    constructor(spec: Diceroll) {
+    constructor(result: DicerollResult) {
         super();
-        this.spec = spec;
+        this.result = result;
     }
 
     ToString(): string {
-        if (this.spec.crit_success) {
-            return `[${this.spec.result.toString()} CS]`;
-        }
-        else if (this.spec.crit_fail) {
-            return `[${this.spec.result.toString()} CF]`;
-        }
-        else {
-            return `[${this.spec.result.toString()}]`;
+        if (this.result.ignored) {
+            return `:${this.result.result}:`
+        } else if (this.result.crit_success) {
+            return `[${this.result.result} CS]`;
+        } else if (this.result.crit_fail) {
+            return `[${this.result.result} CF]`;
+        } else {
+            return `[${this.result.result}]`;
         }
     }
 }
@@ -80,7 +80,9 @@ export class EvaluatedExpression {
 
     static RollLiteral(rolls: DicerollSet) {
 
-        return new EvaluatedExpression(rolls.total, rolls.results.map((result) => {
+        const eval_result = rolls.evaluate();
+        return new EvaluatedExpression(eval_result.total, eval_result.rolls.map((result) => {
+            
             return new EvaluatedDiceroll(result);
         }))
     }

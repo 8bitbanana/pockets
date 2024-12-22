@@ -86,9 +86,8 @@ export class PowerOfOperation implements InfixOperation {
 }
 
 export function RollOperation(left: number, right: number): MyResult<DicerollSet> {
-
     if (left == 0 || right == 0) {
-        return ok({total: 0, results: []});
+        return ok(new DicerollSet([], right));
     }
 
     var results: Diceroll[] = [];
@@ -98,12 +97,9 @@ export function RollOperation(left: number, right: number): MyResult<DicerollSet
         total += result;
         results.push({
             result,
-            size: right,
-            ignored: false,
-            crit_success: result >= right,
-            crit_fail: result <= 1
+            ignored: false
         });
     }
 
-    return ok({total, results});
+    return ok(new DicerollSet(results, right));
 }
