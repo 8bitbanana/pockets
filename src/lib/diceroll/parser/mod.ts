@@ -7,6 +7,7 @@ import grammer, { DicerollSemantics } from "ohm/diceroll.ohm-bundle";
 import { MyResult } from "lib/errors";
 import * as Error from "lib/errors";
 import { ok, err } from "true-myth/dist/es/result";
+import { ohmGrammar } from 'ohm-js';
 
 export type UnparsedExpression = string;
 
@@ -115,7 +116,12 @@ diceroll_semantics.addOperation<expression.Expr>('tree(context)', {
 });
 
 export function Parse(expr: UnparsedExpression): MyResult<ParsedExpression> {
-    const matchResult = grammer.match(expr);
+    let matchResult;
+    try {
+        matchResult = grammer.match(expr);
+    } catch (e) {
+        return err(new Error.ParsingError((e as Error).message));
+    }
 
     // const expr_trace = grammer.trace(expr).toString();
     // console.log(expr_trace);
@@ -126,7 +132,13 @@ export function Parse(expr: UnparsedExpression): MyResult<ParsedExpression> {
 
     let parse_context: expression.ParseContext = { unresolved_variables: new Set };
 
-    const expr_tree: expression.Expr = diceroll_semantics(matchResult).tree(parse_context);
+    let expr_tree: expression.Expr;
+    try {
+        expr_tree = diceroll_semantics(matchResult).tree(parse_context);
+    } catch (e) {
+        return err(new Error.ParsingError((e as Error).message));
+    }
+    
 
     return ok(new ParsedExpression(expr, expr_tree, Array.from(parse_context.unresolved_variables)));
 }
