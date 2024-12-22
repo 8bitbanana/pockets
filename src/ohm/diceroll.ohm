@@ -2,7 +2,45 @@ Diceroll {
 
     Expr = ExprSumInfix
 
-    DicerollToken = "d" | "D"
+    DropLowestToken = caseInsensitive<"dl"> | caseInsensitive<"d">
+    DropHighestToken = caseInsensitive<"dh">
+    KeepHighestToken = caseInsensitive<"kh"> | caseInsensitive<"k">
+    KeepLowestToken = caseInsensitive<"kl">
+    CritSuccessToken = caseInsensitive<"cs">
+    CritFailToken = caseInsensitive<"cf">
+    RerollToken = caseInsensitive<"r">
+    SetWhereToken = caseInsensitive<"w">
+    ExplodeToken = "!"
+    SortAcending = caseInsensitive<"sa">
+    SortDecending = caseInsensitive<"sd">
+
+    ComparisonOperator
+        = "<" --LessThan
+        | "<=" --LessThanOrEqual
+        | ">" --GreaterThan
+        | ">=" --GreaterThanOrEqual
+        | "=" --Equal
+
+    RollModArg
+        = caseInsensitive<"n"> --None
+        | ComparisonOperator NonemptyListOf<digit+,","> --Comparison
+        | NonemptyListOf<digit+,","> --SingleNumber
+        // todo number lists on either comparison
+
+    RollMod
+        = DropLowestToken digit+ --DropLowest
+        | DropHighestToken digit+ --DropHighest
+        | KeepHighestToken digit+ --KeepHighest
+        | KeepLowestToken digit+ --KeepLowest
+        | CritSuccessToken RollModArg --CritSuccess
+        | CritFailToken RollModArg --CritFail
+        | RerollToken RollModArg --Reroll
+        | SetWhereToken RollModArg "=" digit+ --SetWhere
+        | ExplodeToken RollModArg? --Explode
+        | SortAcending --SortAcending
+        | SortDecending --SortDecending
+
+    DicerollToken = caseInsensitive<"d">
 
     ExprSumInfix
         = ExprSumInfix "+" ExprProductInfix --Add
@@ -20,12 +58,12 @@ Diceroll {
         | ExprRollInfix
 
     ExprRollInfix
-        = ExprRollInfix DicerollToken ExprPriority --Dice
+        = ExprRollInfix DicerollToken ExprPriority ListOf<RollMod, ","> --Dice
         | ExprPriority
 
     ExprPriority
         = "(" Expr ")" --Paren
-        | DicerollToken ExprPriority --RollPrefix
+        | DicerollToken ExprPriority ListOf<RollMod, ","> --RollPrefix
         | "+" ExprPriority --PosPrefix
         | "-" ExprPriority --NegPrefix
         | Literal
@@ -33,6 +71,7 @@ Diceroll {
     AttributeInner
         = variable_ident "(" Expr ")" --Function
         | variable_ident --Single
+        // todo multiple function inputs
         
     Literal
         = "[input" digit "]" --FunctionInput
