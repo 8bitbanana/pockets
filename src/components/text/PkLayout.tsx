@@ -14,7 +14,7 @@ export default class PkLayout extends Component {
 
                 <div className={css.flexchild_grow}>
                     <div className={css.flex}>
-                        <PkHeadingTextField  className={css.flexchild_grow} my_key="class" label="Class & Level" />
+                        <PkHeadingTextField className={css.flexchild_grow} my_key="class" label="Class & Level" />
                         <PkHeadingTextField my_key="background" label="Background" />
                     </div>
 

@@ -17,11 +17,11 @@ export default class PkStatsBoxField extends Component<PkStatsBoxFieldProps> {
             <div>
             <PkAttributeViewerField 
                 my_key={this.props.mod_key}
-                className={css.pkstatsbox_bignumber}/>
+                className={css.pkstatsbox_bignumber}
+                modifier/>
             </div>
             <PkAttributeEditorField
-                my_key={this.props.base_key}
-                numberinput/>
+                my_key={this.props.base_key}/>
         </div>;
     }
 }

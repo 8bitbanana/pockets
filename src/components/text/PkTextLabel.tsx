@@ -7,6 +7,6 @@ type PkTextLabelProps = {
 
 export class PkTextLabel extends Component<PkTextLabelProps> {
     render() {
-        return <span className={css.pktextfield_label}>{this.props.label}</span>;
+        return <div className={css.pktextfield_label}>{this.props.label}</div>;
     }
 }

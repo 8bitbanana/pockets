@@ -1,45 +1,84 @@
 import { CharsheetApp } from "components/charsheet_app";
-import PkTextField from "./PkTextField";
+import { Component } from "preact";
+import { CS } from "components/app";
+import { useContext } from "preact/hooks";
+import * as Helpers from "./PkFieldHelpers"
+import * as css from "../pk.module.css"
+import { MyResult } from "lib/errors";
+import { err, ok } from "true-myth/dist/es/result";
 
+type PkAttributeEditorFieldProps = {
+    my_key: string,
+    className?: string
+    number?: boolean
+}
 
-export class PkAttributeEditorField extends PkTextField {
+export class PkAttributeEditorField extends Component<PkAttributeEditorFieldProps> {
 
-    get_field_value(sheet: CharsheetApp): string | undefined {
-        return sheet.attributes.get_inner()
-            .get_unparsed(false).get_attribute(this.props.my_key)
-            .unwrapOr(undefined);
-    }
+    render() {
+        let { sheet } = useContext(CS);
 
-    set_field_value(sheet: CharsheetApp, new_value: string): void {
-        sheet.attributes.mutate((inner) => {
-            inner.get_unparsed(true).modify_attribute(this.props.my_key, new_value);
-        });
+        const field_result = Helpers.get_attr_value(sheet, this.props.my_key);
+        const field_value = field_result.unwrapOr("Err!");
+
+        const edit_mode = field_result.isOk
+            && Helpers.is_edit_mode_enabled(sheet);
+
+            return <div className={Helpers.zip_classes(css.pktextfield_container, this.props.className)}>
+            <input className={edit_mode ? "" : css.invisible}
+                value={field_value}
+                type={this.props.number ? "number" : "text"} 
+                onInput={(event: any) => {
+                    Helpers.set_attr_value(sheet, this.props.my_key, event.target.value);
+                }}
+            />
+            <button className={edit_mode ? css.invisible : ""}
+                onClick={ () => {
+                    console.log(field_value);
+                }}>
+                <span>{field_value.replaceAll(' ', '\u00a0')}</span>
+            </button>
+        </div>;
     }
 }
 
-export class PkAttributeViewerField extends PkTextField {
+type PkAttributeViewerFieldProps = {
+    my_key: string,
+    className?: string,
+    modifier?: boolean
+} 
 
-    get_field_value(sheet: CharsheetApp): string | undefined {
-        const result = sheet.attributes.get_inner()
-            .get_parsed().evaluate(this.props.my_key);
+export class PkAttributeViewerField extends Component<PkAttributeViewerFieldProps> {
 
-        if (result.isErr)
-        {
-            return undefined;
-        }
+    render() {
+        let { sheet } = useContext(CS);
 
-        const total = result.value.total;
-        if (total > 0) {
-            return '+' + total.toString();
-        } else {
-            return total.toString();
-        }
-    }
+        const field_result = Helpers.get_attr_value(sheet, this.props.my_key)
+            .andThen((key): MyResult<string> => {
+                const result = sheet.attributes.get_inner()
+                    .get_parsed().evaluate(this.props.my_key);
 
-    is_editable(): boolean {
-        return false;
-    }
+                if (result.isErr) {
+                    return err(result.error);
+                }
 
-    set_field_value(sheet: CharsheetApp, new_value: string): void {
+                const total = result.value.total;
+                if (total > 0 && this.props.modifier) {
+                    return ok('+' + total.toString());
+                } else {
+                    return ok(total.toString());
+                }
+            });
+
+        const field_value = field_result.unwrapOr("Err!");
+
+        return <div className={Helpers.zip_classes(css.pktextfield_container, this.props.className)}>
+            <button
+                onClick={ () => {
+                    console.log(field_value);
+                }}>
+                <span>{field_value.replaceAll(' ', '\u00a0')}</span>
+            </button>
+        </div>;
     }
 }
