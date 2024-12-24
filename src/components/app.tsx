@@ -26,29 +26,32 @@ function createCharsheet(): Charsheet {
     let attributes = new UnparsedAttrContainer;
 
     let unparsed = [
+        ["arcana_prof", "1"],
+        ["arcana_mod", "[skill_mod([arcana_prof])]"],
+        ["skill_mod", "[input]*[pb]"],
         ["gen_stat", "4d6d1"],
-        //["roll", "5d20kh2"],
-        // ["pb", "3"],
-        // ["stat_mod", "([input]-10)//2"],
+        ["roll", "5d20kh2"],
+        ["pb", "3"],
+        ["stat_mod", "([input]-10)//2"],
 
-        // ["str", "8"],
-        // ["str_mod", "[stat_mod([str])]"],
-        // ["str_check", "[roll]+[str_mod]"],
-        // ["dex", "15"],
-        // ["dex_mod", "[stat_mod([dex])]"],
-        // ["dex_check", "[roll]+[dex_mod]"],
-        // ["con", "18"],
-        // ["con_mod", "[stat_mod([con])]"],
-        // ["con_check", "[roll]+[con_mod]"],
-        // ["int", "9"],
-        // ["int_mod", "[stat_mod([int])]"],
-        // ["int_check", "[roll]+[int_mod]"],
-        // ["wis", "11"],
-        // ["wis_mod", "[stat_mod([wis])]"],
-        // ["wis_check", "[roll]+[wis_mod]"],
-        // ["cha", "20"],
-        // ["cha_mod", "[stat_mod([cha])]"],
-        // ["cha_check", "[roll]+[cha_mod]"],
+        ["str", "8"],
+        ["str_mod", "[stat_mod([str])]"],
+        ["str_check", "[roll]+[str_mod]"],
+        ["dex", "15"],
+        ["dex_mod", "[stat_mod([dex])]"],
+        ["dex_check", "[roll]+[dex_mod]"],
+        ["con", "18"],
+        ["con_mod", "[stat_mod([con])]"],
+        ["con_check", "[roll]+[con_mod]"],
+        ["int", "9"],
+        ["int_mod", "[stat_mod([int])]"],
+        ["int_check", "[roll]+[int_mod]"],
+        ["wis", "11"],
+        ["wis_mod", "[stat_mod([wis])]"],
+        ["wis_check", "[roll]+[wis_mod]"],
+        ["cha", "20"],
+        ["cha_mod", "[stat_mod([cha])]"],
+        ["cha_check", "[roll]+[cha_mod]"],
     ];
 
     type Override = {
@@ -101,7 +104,7 @@ class App extends Component<{}, {}> {
         return (
             <CssVarsProvider theme={pocketsTheme}>
             <CS.Provider value={{sheet}}>
-                <Tabs defaultValue={1}>
+                <Tabs defaultValue={0}>
                     <TabList>
                         <Tab variant='plain' color='neutral'>Layout</Tab>
                         <Tab variant='plain' color='neutral'>Attributes</Tab>

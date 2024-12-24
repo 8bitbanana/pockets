@@ -63,7 +63,7 @@ export class PkAttributeViewerField extends Component<PkAttributeViewerFieldProp
                 }
 
                 const total = result.value.total;
-                if (total > 0 && this.props.modifier) {
+                if (total >= 0 && this.props.modifier) {
                     return ok('+' + total.toString());
                 } else {
                     return ok(total.toString());
@@ -72,13 +72,14 @@ export class PkAttributeViewerField extends Component<PkAttributeViewerFieldProp
 
         const field_value = field_result.unwrapOr("Err!");
 
-        return <div className={Helpers.zip_classes(css.pktextfield_container, this.props.className)}>
+        return <div className={this.props.className}>
+            <div className={css.pktextfield_container}>
             <button
                 onClick={ () => {
                     console.log(field_value);
                 }}>
                 <span>{field_value.replaceAll(' ', '\u00a0')}</span>
             </button>
-        </div>;
+        </div></div>;
     }
 }
