@@ -1,5 +1,5 @@
 import { AttrContainer, UnparsedAttrContainer } from "lib/attribute";
-import { Charsheet } from "lib/charsheet";
+import { Charsheet, CharsheetSkillsBox } from "lib/charsheet";
 import { EvaluatedExpression } from "lib/diceroll/mod";
 import { MyResult } from "lib/errors";
 import SignalWrapper from "./utils/SignalWrapper";
@@ -16,14 +16,17 @@ export class CharsheetApp {
     edit_mode: Signal<boolean>;
     last_ran_expr: SignalWrapper<Maybe<MyResult<EvaluatedExpression>>>;
 
+    public skills: CharsheetSkillsBox;
+
     constructor(sheet: Charsheet) {
         this.attributes = new SignalWrapper(sheet.attributes);
         this.text_fields = new SignalWrapper(sheet.text_fields);
         this.edit_mode = new Signal(false);
         this.last_ran_expr = new SignalWrapper(nothing());
+        this.skills = sheet.skills;
     }
 
     to_charsheet(): Charsheet {
-        return new Charsheet(this.attributes.unpack(), this.text_fields.unpack());
+        return new Charsheet(this.attributes.unpack(), this.text_fields.unpack(), this.skills);
     }
 }

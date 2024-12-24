@@ -1,8 +1,10 @@
 import { Component } from "preact"
-import { PkSwitch, PkTriSwitch } from "./PkSwitch"
+import { PkTriSwitch } from "./PkSwitch"
 import { PkAttributeViewerField } from "./PkAttributeField"
 import { PkTextLabel } from "./PkTextLabel"
 import * as css from "../pk.module.css"
+import { CS } from "components/app"
+import { useContext } from "preact/hooks"
 
 type PkSkillFieldProps = {
     prof_key: string,
@@ -17,5 +19,27 @@ export default class PkSkillField extends Component<PkSkillFieldProps> {
             <PkAttributeViewerField my_key={this.props.mod_key} modifier/>
             <PkTextLabel label={this.props.label} />
             </div>
+    }
+}
+
+type PkSkillFieldContainerProps = {}
+
+export class PkSkillFieldContainer extends Component<PkSkillFieldContainerProps> {
+    render() {
+        let { sheet } = useContext(CS);
+
+        let elems = [];
+
+        for (const skill of sheet.skills.skills) {
+            elems.push(<PkSkillField
+                prof_key={skill.key_prof}
+                mod_key={skill.key_mod}
+                label={skill.label}/>);
+        }
+
+        return <div className={css.pkskillsfieldcontainer}>
+            <PkTextLabel label={sheet.skills.title} />
+            {elems}
+        </div>
     }
 }

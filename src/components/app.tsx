@@ -5,7 +5,7 @@ import 'preact/debug'
 
 import { render, createContext, Context, Component } from 'preact';
 import { AttrContainer, UnparsedAttrContainer } from 'lib/attribute';
-import { Charsheet } from 'lib/charsheet';
+import { Charsheet, CharsheetSkillsBox } from 'lib/charsheet';
 
 import AttributeMenu from './AttributeMenu';
 import EvalContainer from "./eval/EvalContainer";
@@ -26,9 +26,6 @@ function createCharsheet(): Charsheet {
     let attributes = new UnparsedAttrContainer;
 
     let unparsed = [
-        ["arcana_prof", "1"],
-        ["arcana_mod", "[skill_mod([arcana_prof])]"],
-        ["skill_mod", "[input]*[pb]"],
         ["gen_stat", "4d6d1"],
         ["roll", "5d20kh2"],
         ["pb", "3"],
@@ -61,11 +58,30 @@ function createCharsheet(): Charsheet {
 
     type Overrides = [string, Override[]][];
 
+    let skills = new CharsheetSkillsBox("Skills");
 
-    // stat_mod: ([input]-10)//2
-    // str_mod: [stat_mod][str]
-    // str_mod: [stat_mod(str)]
-
+    skills.AddSkill("acrobatics", "Acrobatics", "dex");
+    skills.AddSkill("animal_handling", "Animal Handling", "wis");
+    skills.AddSkill("arcana", "Arcana", "int", "1");
+    skills.AddSkill("athletics", "Athletics", "str");
+    skills.AddSkill("deception", "Deception", "cha");
+    skills.AddSkill("endurance", "Endurance", "con");
+    skills.AddSkill("history", "History", "int");
+    skills.AddSkill("insight", "Insight", "wis", "2");
+    skills.AddSkill("intimidation", "Intimidation", "cha");
+    skills.AddSkill("investigation", "Investigation", "int");
+    skills.AddSkill("medicine", "Medicine", "wis");
+    skills.AddSkill("nature", "Nature", "int");
+    skills.AddSkill("preception", "Perception", "wis");
+    skills.AddSkill("performance", "Performance", "cha");
+    skills.AddSkill("persuasion", "Persuasion", "cha", "2");
+    skills.AddSkill("religion", "Religion", "int");
+    skills.AddSkill("slight_of_hand", "Slight of Hand", "dex");
+    skills.AddSkill("stealth", "Stealth", "dex");
+    skills.AddSkill("streetwise", "Streetwise", "wis");
+    skills.AddSkill("survival", "Survival", "wis");
+    skills.AddSkill("technology", "Technology", "int", "1");
+    
     let overrides: Overrides = [
         ["advantage", [{key: "attack_roll", value: "(2[input]kh1)"}]]
     ]
@@ -82,7 +98,7 @@ function createCharsheet(): Charsheet {
     text_fields.set("size", "Medium");
     text_fields.set("alignment", "Lawful Good");
 
-    return new Charsheet(new AttrContainer(attributes), text_fields);
+    return new Charsheet(new AttrContainer(attributes), text_fields, skills);
 }
 
 export type CharsheetContext = {

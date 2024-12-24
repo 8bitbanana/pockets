@@ -5,7 +5,7 @@ import { PkAttributeEditorField, PkAttributeViewerField } from "./PkAttributeFie
 import * as css from "../pk.module.css";
 import PkStatsBoxField from "./PkStatsBoxField";
 import { PkSwitch } from "./PkSwitch";
-import PkSkillField from "./PkSkillField";
+import PkSkillField, { PkSkillFieldContainer } from "./PkSkillField";
 
 export default class PkLayout extends Component {
     render() {
@@ -31,7 +31,7 @@ export default class PkLayout extends Component {
             <hr />
 
             <div className={css.flex}>
-                <div id="col1-stats">
+                <div id="col1-stats" className={css.flexchild_shrink}>
                     <PkStatsBoxField base_key="str" mod_key="str_mod" label="Strength" />
                     <PkStatsBoxField base_key="dex" mod_key="dex_mod" label="Dexterity" />
                     <PkStatsBoxField base_key="con" mod_key="con_mod" label="Constitution" />
@@ -40,7 +40,7 @@ export default class PkLayout extends Component {
                     <PkStatsBoxField base_key="cha" mod_key="cha_mod" label="Charisma" />
                 </div>
                 <div id="col2-skills">
-                    <PkSkillField prof_key="arcana_prof" mod_key="arcana_mod" label="Arcana" />
+                    <PkSkillFieldContainer/>
                 </div>
                 <div id="col3-attacks" className={css.flexchild_grow}>
 

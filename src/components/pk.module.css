@@ -91,6 +91,12 @@ button.tri_inner {
     background-color: orange;
 }
 
+.pkskillsfieldcontainer {
+    padding: 5;
+    margin: 5;
+    border: 3px solid black;
+}
+
 .character_name {
     min-width: 160px;
 }
