@@ -10,7 +10,8 @@ import { err, ok } from "true-myth/dist/es/result";
 type PkAttributeEditorFieldProps = {
     my_key: string,
     className?: string
-    number?: boolean
+    number?: boolean,
+    always_edit?: boolean
 }
 
 export class PkAttributeEditorField extends Component<PkAttributeEditorFieldProps> {
@@ -22,7 +23,7 @@ export class PkAttributeEditorField extends Component<PkAttributeEditorFieldProp
         const field_value = field_result.unwrapOr("Err!");
 
         const edit_mode = field_result.isOk
-            && Helpers.is_edit_mode_enabled(sheet);
+            && (this.props.always_edit || Helpers.is_edit_mode_enabled(sheet));
 
             return <div className={Helpers.zip_classes(css.pktextfield_container, this.props.className)}>
             <input className={edit_mode ? "" : css.invisible}
@@ -45,7 +46,8 @@ export class PkAttributeEditorField extends Component<PkAttributeEditorFieldProp
 type PkAttributeViewerFieldProps = {
     my_key: string,
     className?: string,
-    modifier?: boolean
+    modifier?: boolean,
+    suffix?: string
 } 
 
 export class PkAttributeViewerField extends Component<PkAttributeViewerFieldProps> {
@@ -63,11 +65,17 @@ export class PkAttributeViewerField extends Component<PkAttributeViewerFieldProp
                 }
 
                 const total = result.value.total;
+
+                let out_str = total.toString();
+
                 if (total >= 0 && this.props.modifier) {
-                    return ok('+' + total.toString());
-                } else {
-                    return ok(total.toString());
+                    out_str = '+' + out_str;
                 }
+                if (this.props.suffix !== undefined) {
+                    out_str = out_str + this.props.suffix;
+                }
+
+                return ok(out_str);
             });
 
         const field_value = field_result.unwrapOr("Err!");

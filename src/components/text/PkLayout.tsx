@@ -1,11 +1,9 @@
 import { Component } from "preact";
-import PkTextField, { PkHeadingTextField } from "./PkTextField";
-import { PkAttributeEditorField, PkAttributeViewerField } from "./PkAttributeField";
+import { PkHeadingTextField } from "./PkTextField";
 
 import * as css from "../pk.module.css";
-import PkStatsBoxField from "./PkStatsBoxField";
-import { PkSwitch } from "./PkSwitch";
-import PkSkillField, { PkSkillFieldContainer } from "./PkSkillField";
+import { PkAttributeViewerBoxField, PkHealthViewerBoxField, PkHitDiceBoxField, PkStatsBoxField } from "./PkBoxFields";
+import { PkSkillFieldContainer } from "./PkSkillField";
 
 export default class PkLayout extends Component {
     render() {
@@ -43,7 +41,22 @@ export default class PkLayout extends Component {
                     <PkSkillFieldContainer/>
                 </div>
                 <div id="col3-attacks" className={css.flexchild_grow}>
-
+                    <div className={css.pkattrbox_container}>
+                    <div className={css.flex}>
+                    <PkAttributeViewerBoxField my_key="ac" label={"Armour\nClass"} />
+                    <PkAttributeViewerBoxField my_key="initiative_mod" label="Initiative" modifier />
+                    <PkAttributeViewerBoxField my_key="speed" label="Speed" suffix="ft" />
+                    </div>
+                    <div className={css.flex}>
+                    <PkHealthViewerBoxField current_key="hp" max_key="max_hp" label="HP" />
+                    <PkHitDiceBoxField
+                        current_key="hit_dice_count"
+                        max_key="level"
+                        size_key="hit_dice_size"
+                        label="Hit Dice" />
+                    </div>
+                    </div>
+                    
                 </div>
                 <div id="col4-feats">
 

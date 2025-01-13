@@ -26,6 +26,15 @@ function createCharsheet(): Charsheet {
     let attributes = new UnparsedAttrContainer;
 
     let unparsed = [
+        ["hp", "83"],
+        ["max_hp", "87"],
+        ["ac", "15"],
+        ["initiative_mod", "[dex_mod]"],
+        ["speed", "30"],
+        ["level", "11"],
+        ["hit_dice_count", "11"],
+        ["hit_dice_size", "6"],
+
         ["gen_stat", "4d6d1"],
         ["roll", "5d20kh2"],
         ["pb", "3"],
